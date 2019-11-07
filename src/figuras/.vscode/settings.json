@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "retangulo.h": "c",
+        "circulo.h": "c",
+        "quadra.h": "c"
+    }
+}
