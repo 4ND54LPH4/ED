@@ -14,7 +14,7 @@ Quadra addQuadra(char comandos[500],double cq,char cfill[MAX],char cstrk[MAX]) {
     char id[MAX];
     double x=0,y=0,w=0,h=0;
     struct quadra *temp = (struct quadra*)calloc(1,sizeof(struct quadra));
-    
+
     sscanf(comandos,"q %s %lf %lf %lf %lf",id,&x,&y,&w,&h);
 
     strcpy(temp->id,id);
@@ -94,9 +94,10 @@ void removeQuadra(Quadra recebeQuadra) {
     free(temp);
 }
 
-void printValorQuadra(Quadra recebeQuadra) {
+char* printValorQuadra(Quadra recebeQuadra, char *dados) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
-    printf("id: %s | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
+    sprintf(dados, "id: %s | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
+    return dados;
 }
 
 int comparaQuadra(Quadra recebeQuadra1,Quadra recebeQuadra2) {
@@ -111,7 +112,7 @@ int comparaQuadra(Quadra recebeQuadra1,Quadra recebeQuadra2) {
         return 1;
     } else if(temp1->y < temp2->y) {
         return -1;
-    } 
+    }
     return 0;
 }
 
@@ -123,6 +124,12 @@ int comparaIdQuadra(Quadra recebeQuadra1,Quadra recebeQuadra2) {
         return 1;
     } else if(strcmp(temp1->id,temp2->id) < 0) {
         return -1;
-    } 
+    }
     return 0;
+}
+
+int comparaKeyQuadra(Quadra recebeQuadra, char* key) {
+    struct quadra *temp = (struct quadra*) recebeQuadra;
+
+    return strcmp(temp->id, key);
 }

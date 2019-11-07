@@ -8,5 +8,8 @@
 #include "./arquivos/qry.h"
 #include "./arquivos/ec.h"
 #include "./arquivos/pm.h"
+#include "./arquivos/interativo.h"
+#include "./figuras/estrutura/hash.h"
+#include "./figuras/estrutura/rbtree.h"
 
 #endif

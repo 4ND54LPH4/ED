@@ -17,9 +17,10 @@ void setSemaforoX(Semaforo recebeSemaforo,double nX);
 void setSemaforoY(Semaforo recebeSemaforo,double nY);
 
 void removeSemaforo(Semaforo recebeSemaforo);
-void printValorSemaforo(Semaforo recebeSemaforo);
+char* printValorSemaforo(Semaforo recebeSemaforo, char *dados);
 int comparaSemaforo(Semaforo recebeSemaforo1,Semaforo recebeSemaforo2);
 int comparaIdSemaforo(Semaforo recebeSemaforo1,Semaforo recebeSemaforo2);
+int comparaKeySemaforo(Semaforo recebeSemaforo, char* key);
 
 
 #endif

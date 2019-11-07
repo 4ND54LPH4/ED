@@ -5,22 +5,20 @@
 
 
 typedef struct retangulo {
-    int id;
     double rw;
     double x,y,w,h;
-    char cor1[50],cor2[50];
+    char cor1[50],cor2[50],id[20];
 } *pRetangulo;
 
 
 Retangulo addRetangulo(char comandos[500],double rw) {
-    int id;
     double x,y,w,h;
-    char cor1[50]={},cor2[50]={};
+    char cor1[50]={},cor2[50]={},id[20]={};
     struct retangulo *temp = (struct retangulo*)calloc(1,sizeof(struct retangulo));
 
-    sscanf(comandos,"r %d %lf %lf %lf %lf %s %s",&id,&w,&h,&x,&y,cor1,cor2);
+    sscanf(comandos,"r %s %lf %lf %lf %lf %s %s",id,&w,&h,&x,&y,cor1,cor2);
 
-    temp->id = id;
+    strcpy(temp->id,id);
     temp->x = x;
     temp->y = y;
     temp->w = w;
@@ -32,7 +30,7 @@ Retangulo addRetangulo(char comandos[500],double rw) {
     return (void*)temp;
 }
 
-int getRetanguloID(Retangulo recebeRetangulo) {
+char* getRetanguloID(Retangulo recebeRetangulo) {
     struct retangulo *temp = (struct retangulo*) recebeRetangulo;
     return temp->id;
 }
@@ -87,11 +85,6 @@ void removeRetangulo(Retangulo recebeRetangulo) {
     free(temp);
 }
 
-void printValorRetangulo(Retangulo recebeRetangulo) {
-    struct retangulo *temp = (struct retangulo*) recebeRetangulo;
-    printf("id: %d | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
-}
-
 int comparaRetangulo(Retangulo recebeRetangulo1,Retangulo recebeRetangulo2) {
     struct retangulo *temp1 = (struct retangulo*) recebeRetangulo1;
     struct retangulo *temp2 = (struct retangulo*) recebeRetangulo2;
@@ -104,6 +97,19 @@ int comparaRetangulo(Retangulo recebeRetangulo1,Retangulo recebeRetangulo2) {
         return 1;
     } else if(temp1->y < temp2->y) {
         return -1;
-    } 
+    }
     return 0;
+}
+
+int comparaIdRetangulo(Retangulo recebeRetangulo1,Retangulo recebeRetangulo2) {
+    struct retangulo *temp1 = (struct retangulo*) recebeRetangulo1;
+    struct retangulo *temp2 = (struct retangulo*) recebeRetangulo2;
+
+    return strcmp(temp1->id, temp2->id);
+}
+
+int comparaKeyRetangulo(Retangulo recebeRetangulo, char* key) {
+    struct retangulo *temp = (struct retangulo*) recebeRetangulo;
+
+    return strcmp(temp->id, key);
 }

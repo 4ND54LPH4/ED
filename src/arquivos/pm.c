@@ -3,9 +3,11 @@
 #include <string.h>
 #include "ec.h"
 #include "../util/util.h"
-#include "../figuras/pessoa.h"
+#include "../figuras/figuras.h"
+#include "../figuras/estrutura/rbtree.h"
+#include "../figuras/estrutura/hash.h"
 
-void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qtdFiguras) {
+void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qtdFiguras, struct tree **pessoa, struct tree **morador, tabelaHash **hashPes, tabelaHash **hashMor) {
     // Variável para leitura da linha do arquivo
     char linhaArquivo[500];
     // Variáveis auxiliares para abertura do arquivo
@@ -13,6 +15,12 @@ void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qt
     char *temp2 = NULL;
     // Variáveis para controle da quantidade de figuras
     int totalFeitos = 0;
+    // Variáveis das trees das figuras
+    *pessoa = criarTree(comparaPessoa, comparaPessoa, removePessoa, NULL);
+    *morador = criarTree(comparaMorador, comparaMorador, removeMorador, NULL);
+    // Variáveis das hash das figuras
+    *hashPes = criarTabelaHash(1000, comparaKeyPessoa, getPessoaCpf);
+    *hashMor = criarTabelaHash(1000, comparaKeyMorador, getMoradorCpf);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;
@@ -43,10 +51,19 @@ void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qt
     while(fgets(linhaArquivo,500,arquivoEntrada)!=NULL) {
         if(linhaArquivo[0]=='p' && linhaArquivo[1]==' ') {
             // Adiciona pessoa
-            
+            Pessoa tempPessoa = addPessoa(linhaArquivo);
+            insertTree(*pessoa, tempPessoa);
+            inserirHash(*hashPes, tempPessoa);
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]==' ') {
             // Insere endereço
-            
+            Morador tempMorador = addMorador(linhaArquivo, *hashPes);
+            Pessoa tempPes = getObjetoHash(*hashPes, getMoradorCpf(tempMorador));
+            if (getPessoaCpf(tempPes) != NULL) {
+                insertTree(*morador, tempMorador);
+                inserirHash(*hashMor, tempMorador);
+            } else {
+                printf("Pessoa nao cadastrada!\n");
+            }
         }
     }
 

@@ -17,8 +17,9 @@ void setHidranteX(Hidrante recebeHidrante,double nX);
 void setHidranteY(Hidrante recebeHidrante,double nY);
 
 void removeHidrante(Hidrante recebeHidrante);
-void printValorHidrante(Hidrante recebeHidrante);
+char* printValorHidrante(Hidrante recebeHidrante, char *dados);
 int comparaHidrante(Hidrante recebeHidrante1,Hidrante recebeHidrante2);
 int comparaIdHidrante(Hidrante recebeHidrante1,Hidrante recebeHidrante2);
+int comparaKeyHidrante(Hidrante recebeHidrante, char* key);
 
 #endif

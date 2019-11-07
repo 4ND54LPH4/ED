@@ -13,8 +13,8 @@ typedef struct texto {
 Texto addTexto(char comandos[500]) {
     double x=0,y=0;
     char texto[500];
-    struct texto *temp = (struct texto*)calloc(1,sizeof(struct texto));
-    
+    struct texto *temp = (struct texto*)malloc(sizeof(struct texto));
+
     sscanf(comandos,"t %lf %lf %[^\n]",&x,&y,texto);
 
     temp->x = x;
@@ -42,4 +42,20 @@ char *getTextoTexto(Texto recebeTexto) {
 void removeTexto(Texto recebeTexto) {
     struct texto *temp = (struct texto*) recebeTexto;
     free(temp);
+}
+
+int comparaTexto(Texto recebeTexto1,Texto recebeTexto2) {
+    struct texto *temp1 = (struct texto*) recebeTexto1;
+    struct texto *temp2 = (struct texto*) recebeTexto2;
+
+    if(temp1->x > temp2->x) {
+        return 1;
+    } else if(temp1->x < temp2->x) {
+        return -1;
+    } else if(temp1->y > temp2->y) {
+        return 1;
+    } else if(temp1->y < temp2->y) {
+        return -1;
+    }
+    return 0;
 }

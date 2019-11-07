@@ -15,7 +15,7 @@ Radio addRadio(char comandos[500],double cr,char cfill[30],char cstrk[30]) {
     char id[MAX];
     double x=0,y=0;
     struct radio *temp = (struct radio*)calloc(1,sizeof(struct radio));
-    
+
     sscanf(comandos,"rb %s %lf %lf",id,&x,&y);
 
     strcpy(temp->id,id);
@@ -24,7 +24,7 @@ Radio addRadio(char comandos[500],double cr,char cfill[30],char cstrk[30]) {
     temp->cr = cr;
     strcpy(temp->cfill,cfill);
     strcpy(temp->cstrk,cstrk);
-    
+
     return (void*)temp;
 }
 
@@ -73,9 +73,10 @@ void removeRadio(Radio recebeRadio) {
     free(temp);
 }
 
-void printValorRadio(Radio recebeRadio) {
+char* printValorRadio(Radio recebeRadio, char *dados) {
     struct radio *temp = (struct radio*) recebeRadio;
-    printf("id: %s | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
+    sprintf(dados, "id: %s | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
+    return dados;
 }
 
 int comparaRadio(Radio recebeRadio1,Radio recebeRadio2) {
@@ -90,7 +91,7 @@ int comparaRadio(Radio recebeRadio1,Radio recebeRadio2) {
         return 1;
     } else if(temp1->y < temp2->y) {
         return -1;
-    } 
+    }
     return 0;
 }
 
@@ -102,6 +103,12 @@ int comparaIdRadio(Radio recebeRadio1,Radio recebeRadio2) {
         return 1;
     } else if(strcmp(temp1->id,temp2->id) < 0) {
         return -1;
-    } 
+    }
     return 0;
+}
+
+int comparaKeyRadio(Radio recebeRadio, char* key) {
+    struct radio *temp = (struct radio*) recebeRadio;
+
+    return strcmp(temp->id, key);
 }

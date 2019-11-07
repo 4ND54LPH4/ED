@@ -10,6 +10,11 @@
 #include "quadra.h"
 
 #include "muro.h"
+#include "predio.h"
 
+#include "pessoa.h"
+#include "morador.h"
+#include "tipoEstabelecimento.h"
+#include "estabelecimento.h"
 
 #endif

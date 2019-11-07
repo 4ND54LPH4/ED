@@ -11,6 +11,32 @@ int main(int argc,char *argv[]) {
     char *estabComercial = NULL;
     char *pessoas = NULL;
     int modoInterativo = 0;
+    // Variáveis das trees das figures
+    struct tree *circulo;
+    struct tree *retangulo;
+    struct tree *texto;
+    struct tree *hidrante;
+    struct tree *quadra;
+    struct tree *semaforo;
+    struct tree *radio;
+    struct tree *muro;
+    struct tree *predio;
+    struct tree *pessoa;
+    struct tree *morador;
+    struct tree *tipoEstabelecimento;
+    struct tree *estabelecimento;
+    // Variáveis das hash das figuras
+    struct tabelaHash *hashCirc;
+    struct tabelaHash *hashRet;
+    struct tabelaHash *hashHid;
+    struct tabelaHash *hashQuad;
+    struct tabelaHash *hashSem;
+    struct tabelaHash *hashRad;
+    struct tabelaHash *hashPrd;
+    struct tabelaHash *hashPes;
+    struct tabelaHash *hashMor;
+    struct tabelaHash *hashTipEst;
+    struct tabelaHash *hashEst;
     // Variável para armazenar o número máximo de figuras
     nx *quantidadeFiguras;
     quantidadeFiguras = criaNx();
@@ -28,33 +54,64 @@ int main(int argc,char *argv[]) {
     }
 
     // Comandos do arquivo .geo
-    processarComandosGeo(pGeo,localEntrada,localSaida,quantidadeFiguras);
+    processarComandosGeo(pGeo,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd);
 
     // Comandos do arquivo .ec (caso exista)
     if(estabComercial != NULL) {
-        processarComandosEc(estabComercial,localEntrada,localSaida,quantidadeFiguras);
+        processarComandosEc(estabComercial,localEntrada,localSaida,quantidadeFiguras, &tipoEstabelecimento, &estabelecimento, (tabelaHash)&hashTipEst, (tabelaHash)&hashEst, (tabelaHash)&hashPes);
     }
 
     // Comandos do arquivo .pm (caso exista)
     if(pessoas != NULL) {
-        processarComandosPm(pessoas,localEntrada,localSaida,quantidadeFiguras);
+        processarComandosPm(pessoas,localEntrada,localSaida,quantidadeFiguras, &pessoa, &morador, (tabelaHash)&hashPes, (tabelaHash)&hashMor);
     }
-    
+
     // Comandos do arquivo .qry (caso exista)
     if(pQry != NULL) {
-        processarComandosQry(pQry,localEntrada);
+        processarComandosQry(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
     }
 
     // Entra no modo interativo (caso seja solicitado)
     if(modoInterativo) {
-        printf("Mexe agora corno\n");
-        getchar();
+        processarInterativo(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
     }
 
     // PRINTANDO AS VARIÁVEIS P TESTA ESSA MERDA
     printf("\n\nGeo: %s\nQry: %s\nlocalEntrada: %s\nlocalSaida: %s\nestab: %s\npessoas: %s\nmodoI: %d\n\n",pGeo,pQry,localEntrada,localSaida,estabComercial,pessoas,modoInterativo);
 
     // Desalocar variáveis
+    destruirTabelaHash(hashCirc);
+    destruirTabelaHash(hashRet);
+    destruirTabelaHash(hashPrd);
+    destruirTabelaHash(hashQuad);
+    destruirTabelaHash(hashHid);
+    destruirTabelaHash(hashSem);
+    destruirTabelaHash(hashRad);
+
+    deleteTree(predio);
+    deleteTree(quadra);
+    deleteTree(hidrante);
+    deleteTree(semaforo);
+    deleteTree(radio);
+    deleteTree(muro);
+    deleteTree(circulo);
+    deleteTree(retangulo);
+    deleteTree(texto);
+
+    if(estabComercial != NULL) {
+        destruirTabelaHash(hashTipEst);
+        destruirTabelaHash(hashEst);
+        deleteTree(tipoEstabelecimento);
+        deleteTree(estabelecimento);
+    }
+
+    if(pessoas != NULL) {
+        destruirTabelaHash(hashPes);
+        destruirTabelaHash(hashMor);
+        deleteTree(pessoa);
+        deleteTree(morador);
+    }
+
     free(pGeo);
     free(pQry);
     free(localEntrada);

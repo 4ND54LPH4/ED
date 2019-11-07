@@ -5,9 +5,16 @@
 #include "../util/util.h"
 #include "../svg/svg.h"
 #include "../figuras/figuras.h"
+#include "../figuras/estrutura/rbtree.h"
+#include "../figuras/estrutura/hash.h"
 
 
-void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdFiguras) {
+void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdFiguras,struct tree **circulo,
+    struct tree **retangulo,struct tree **texto,struct tree **hidrante,struct tree **quadra,
+    struct tree **semaforo,struct tree **radio,struct tree **muro,struct tree **predio,
+    tabelaHash **hashCirc,tabelaHash **hashRet, tabelaHash **hashHid,tabelaHash **hashQuad,
+    tabelaHash **hashSem,tabelaHash **hashRad,tabelaHash **hashPrd) {
+
     // Variável para leitura da linha do arquivo
     char linhaArquivo[500];
     // Variáveis auxiliares para abertura do arquivo
@@ -30,6 +37,24 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
     // Variáveis para as bordas padrões das figuras
     double cw=1.5;
     double rw=1.5,cq=1.5,ch=1.5,cr=1.5,cs=1.5,cp=1.5;
+    // Variáveis das trees das figuras
+    *circulo = criarTree(comparaCirculo, comparaIdCirculo, removeCirculo, NULL);
+    *retangulo = criarTree(comparaRetangulo, comparaIdRetangulo, removeRetangulo, NULL);
+    *texto = criarTree(comparaTexto, NULL, removeTexto, NULL);
+    *hidrante = criarTree(comparaHidrante, comparaIdHidrante, removeHidrante, printValorHidrante);
+    *quadra = criarTree(comparaQuadra, comparaIdQuadra, removeQuadra, printValorQuadra);
+    *semaforo = criarTree(comparaSemaforo, comparaIdSemaforo, removeSemaforo, printValorSemaforo);
+    *radio = criarTree(comparaRadio, comparaIdRadio, removeRadio, printValorRadio);
+    *muro = criarTree(comparaMuro, NULL, removeMuro, printValorMuro);
+    *predio = criarTree(comparaPredio, comparaIdPredio, removePredio, printValorPredio);
+    // Variáveis das hash das figuras
+    *hashCirc = criarTabelaHash(1000, comparaKeyCirculo, getCirculoID);
+    *hashRet = criarTabelaHash(1000, comparaKeyRetangulo, getRetanguloID);
+    *hashHid = criarTabelaHash(1000, comparaKeyHidrante, getHidranteId);
+    *hashQuad = criarTabelaHash(1000, comparaKeyQuadra, getQuadraId);
+    *hashSem = criarTabelaHash(1000, comparaKeySemaforo, getSemaforoId);
+    *hashRad = criarTabelaHash(1000, comparaKeyRadio, getRadioId);
+    *hashPrd = criarTabelaHash(1000, comparaKeyPredio, getPredioId);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;
@@ -44,7 +69,6 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
 
     // Abre o arquivo svg de saída
     temp2 = getSvgSaida(localSaida,pGeo);
-    printf("TEMP2: %s\n\n",temp2);
     arquivoSaida = fopen(temp2,"w");
 
     if(arquivoEntrada == NULL) {
@@ -68,7 +92,7 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Circulo tempCirculo = addCirculo(linhaArquivo,cw);
                 desenharCirculo(temp2,tempCirculo);
                 totalFeitos++;
-                removeCirculo(tempCirculo);
+                insertTree(*circulo, tempCirculo);
             }
         } else if(linhaArquivo[0]=='r' && linhaArquivo[1]==' ') {
             // Adiciona Retangulo
@@ -76,20 +100,21 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Retangulo tempRetangulo = addRetangulo(linhaArquivo,rw);
                 desenharRetangulo(temp2,tempRetangulo);
                 totalFeitos++;
-                removeRetangulo(tempRetangulo);
+                insertTree(*retangulo, tempRetangulo);
             }
         } else if(linhaArquivo[0]=='t' && linhaArquivo[1]==' ') {
             // Adiciona Texto
             Texto tempTexto = addTexto(linhaArquivo);
             escreverTexto(temp2,tempTexto);
-            removeTexto(tempTexto);
+            insertTree(*texto, tempTexto);
         } else if(linhaArquivo[0]=='q' && linhaArquivo[1]==' ') {
             // Adiciona Quadra
             if(totalFeitosQuadra < getNqNx(qtdFiguras)) {
                 Quadra tempQuadra = addQuadra(linhaArquivo,cq,cor1Quadra,cor2Quadra);
                 desenharQuadra(temp2,tempQuadra);
                 totalFeitosQuadra++;
-                removeQuadra(tempQuadra);
+                insertTree(*quadra, tempQuadra);
+                inserirHash(*hashQuad, tempQuadra);
             }
         } else if(linhaArquivo[0]=='h' && linhaArquivo[1]==' ') {
             // Adiciona Hidrante
@@ -97,7 +122,8 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Hidrante tempHidrante = addHidrante(linhaArquivo,ch,cor1Hidrante,cor2Hidrante);
                 desenharHidrante(temp2,tempHidrante);
                 totalFeitosHidrante++;
-                removeHidrante(tempHidrante);
+                insertTree(*hidrante, tempHidrante);
+                inserirHash(*hashHid, tempHidrante);
             }
         } else if(linhaArquivo[0]=='s' && linhaArquivo[1]==' ') {
             // Adiciona Semaforo
@@ -105,7 +131,8 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Semaforo tempSemaforo = addSemaforo(linhaArquivo,cs,cor1Semaforo,cor2Semaforo);
                 desenharSemaforo(temp2,tempSemaforo);
                 totalFeitosSemaforo++;
-                removeSemaforo(tempSemaforo);
+                insertTree(*semaforo, tempSemaforo);
+                inserirHash(*hashSem, tempSemaforo);
             }
         } else if(linhaArquivo[0]=='r' && linhaArquivo[1]=='b') {
             // Adiciona Radio Base
@@ -113,7 +140,8 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Radio tempRadio = addRadio(linhaArquivo,cr,cor1Radio,cor2Radio);
                 desenharRadio(temp2,tempRadio);
                 totalFeitosRadio++;
-                removeRadio(tempRadio);
+                insertTree(*radio, tempRadio);
+                inserirHash(*hashRad, tempRadio);
             }
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='q') {
             // Muda cores do preenchimento (cfill) e da borda (cstrk) das quadras, espessura da borda
@@ -133,9 +161,11 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
         } else if(linhaArquivo[0]=='p' && linhaArquivo[1]=='r') {
             // Adiciona Predio
             if(totalFeitosPredio < getNpNx(qtdFiguras)) {
-               
-
-               
+                Predio tempPredio = addPredio(linhaArquivo, *hashQuad);
+                desenharPredio(temp2, tempPredio);
+                totalFeitosPredio++;
+                insertTree(*predio, tempPredio);
+                inserirHash(*hashPrd, tempPredio);
             }
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='u') {
             // Adiciona Muro
@@ -143,10 +173,26 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 Muro tempMuro = addMuro(linhaArquivo,totalFeitosMuro);
                 desenharMuro(temp2,tempMuro);
                 totalFeitosMuro++;
-                removeMuro(tempMuro);
+                insertTree(*muro, tempMuro);
             }
         }
     }
+
+    /* Percorrer uma hash
+    int c = 0;
+	for (int i = 0; i < getTamHash(*hashSem); i++) {
+		listaHash n = getIndiceHash(*hashSem, i);
+		if (n != NULL) {
+			listaHash aux = n;
+			while (aux != NULL) {
+				n = getProxHash(n);
+				printf("c : %d\n", c);
+				printf("i: %d\n", i);
+				c++;
+				aux = n;
+			}
+		}
+	}*/
 
     finalizarSvg(temp2);
 

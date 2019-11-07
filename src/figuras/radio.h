@@ -17,9 +17,10 @@ void setRadioX(Radio recebeRadio,double nX);
 void setRadioY(Radio recebeRadio,double nY);
 
 void removeRadio(Radio recebeRadio);
-void printValorRadio(Radio recebeRadio);
+char* printValorRadio(Radio recebeRadio, char *dados);
 int comparaRadio(Radio recebeRadio1,Radio recebeRadio2);
 int comparaIdRadio(Radio recebeRadio1,Radio recebeRadio2);
+int comparaKeyRadio(Radio recebeRadio, char* key);
 
 
 #endif

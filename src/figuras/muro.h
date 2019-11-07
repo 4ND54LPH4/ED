@@ -12,5 +12,7 @@ double getMuroX2(Muro recebeMuro);
 double getMuroY2(Muro recebeMuro);
 
 void removeMuro(Muro recebeMuro);
+char* printValorMuro(Muro recebeMuro, char *dados);
+int comparaMuro(Muro recebeMuro1,Muro recebeMuro2);
 
 #endif

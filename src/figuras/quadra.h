@@ -22,8 +22,9 @@ void setQuadraCstrk(Quadra recebeQuadra,char cstrk[MAX]);
 
 
 void removeQuadra(Quadra recebeQuadra);
-void printValorQuadra(Quadra recebeQuadra);
+char* printValorQuadra(Quadra recebeQuadra, char *dados);
 int comparaQuadra(Quadra recebeQuadra1,Quadra recebeQuadra2);
 int comparaIdQuadra(Quadra recebeQuadra1,Quadra recebeQuadra2);
+int comparaKeyQuadra(Quadra recebeQuadra, char* key);
 
 #endif

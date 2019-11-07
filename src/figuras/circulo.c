@@ -5,21 +5,19 @@
 
 
 typedef struct circulo {
-    int id;
     double x,y,r,cw;
-    char cor1[50],cor2[50];
+    char cor1[50],cor2[50],id[20];
 } *pCirculo;
 
 
 Circulo addCirculo(char comandos[500],double rw) {
-    int id=0;
     double x=0,y=0,r=0;
-    char cor1[50]={},cor2[50]={};
+    char cor1[50]={},cor2[50]={},id[20]={};
     struct circulo *temp = (struct circulo*)calloc(1,sizeof(struct circulo));
 
-    sscanf(comandos,"c %d %lf %lf %lf %s %s",&id,&r,&x,&y,cor1,cor2);    
+    sscanf(comandos,"c %s %lf %lf %lf %s %s",id,&r,&x,&y,cor1,cor2);
 
-    temp->id = id;
+    strcpy(temp->id,id);
     temp->r = r;
     temp->x = x;
     temp->y = y;
@@ -29,7 +27,7 @@ Circulo addCirculo(char comandos[500],double rw) {
     return (void*)temp;
 }
 
-int getCirculoID(Circulo recebeCirculo) {
+char* getCirculoID(Circulo recebeCirculo) {
     struct circulo *temp = (struct circulo*) recebeCirculo;
     return temp->id;
 }
@@ -79,11 +77,6 @@ void removeCirculo(Circulo recebeCirculo) {
     free(temp);
 }
 
-void printValorCirculo(Circulo recebeCirculo) {
-    struct circulo *temp = (struct circulo*) recebeCirculo;
-    printf("id: %d | x: %lf | y: %lf\n",temp->id,temp->x,temp->y);
-}
-
 int comparaCirculo(Circulo recebeCirculo1,Circulo recebeCirculo2) {
     struct circulo *temp1 = (struct circulo*) recebeCirculo1;
     struct circulo *temp2 = (struct circulo*) recebeCirculo2;
@@ -96,6 +89,18 @@ int comparaCirculo(Circulo recebeCirculo1,Circulo recebeCirculo2) {
         return 1;
     } else if(temp1->y < temp2->y) {
         return -1;
-    } 
+    }
     return 0;
+}
+
+int comparaIdCirculo(Circulo recebeCirculo1,Circulo recebeCirculo2) {
+    struct circulo *temp1 = (struct circulo*) recebeCirculo1;
+    struct circulo *temp2 = (struct circulo*) recebeCirculo2;
+
+    return strcmp(temp1->id, temp2->id);
+}
+
+int comparaKeyCirculo(Circulo recebeCirculo, char *key) {
+    struct circulo *temp = (struct circulo*) recebeCirculo;
+    return strcmp(temp->id, key);
 }

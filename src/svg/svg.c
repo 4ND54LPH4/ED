@@ -5,7 +5,7 @@
 
 void iniciarSvg(char *fileName) {
     FILE *arquivo = NULL;
-    arquivo = fopen(fileName,"a+");
+    arquivo = fopen(fileName,"w");
     fputs("<svg style='stroke-width:3px;fill-opacity:0.5'>\n<rect width = '100%' height = '100%' fill = 'white' fill-opacity = '1.0'/>\n",arquivo);
     fclose(arquivo);
 }
@@ -63,7 +63,7 @@ void desenharQuadra(char *fileName,Quadra recebeQuadra) {
         getQuadraId(recebeQuadra));
 
     fclose(saidaSvg);
-}  
+}
 
 void desenharHidrante(char *fileName,Hidrante recebeHidrante) {
     FILE *saidaSvg = NULL;
@@ -75,14 +75,14 @@ void desenharHidrante(char *fileName,Hidrante recebeHidrante) {
 
     fprintf(saidaSvg,"\t<text x='%lf' y='%lf' text-anchor='middle' font-size='4px'>H</text>\n",
             getHidranteX(recebeHidrante),getHidranteY(recebeHidrante)+0.75);
-    
+
     fclose(saidaSvg);
 }
 
 void desenharSemaforo(char *fileName,Semaforo recebeSemaforo) {
     FILE *saidaSvg = NULL;
     saidaSvg = fopen(fileName,"a+");
-    
+
     fprintf(saidaSvg,"\t<circle r='5' cx='%lf' cy='%lf' stroke='%s' fill='%s' stroke-width='%lf'/>\n",
         getSemaforoX(recebeSemaforo),getSemaforoY(recebeSemaforo),getSemaforoCstrk(recebeSemaforo),
         getSemaforoCfill(recebeSemaforo),getSemaforoCs(recebeSemaforo));
@@ -108,8 +108,18 @@ void desenharRadio(char *fileName,Radio recebeRadio) {
 }
 
 
-void desenharPredio(FILE *saidaSvg) {
-    //fprintf(saidaSvg,);
+void desenharPredio(char *fileName,Predio recebePredio) {
+    FILE *saidaSvg = NULL;
+    saidaSvg = fopen(fileName,"a+");
+
+    fprintf(saidaSvg,"\t<rect x='%lf' y='%lf' width='%lf' height='%lf' stroke='black' fill='grey' stroke-width='1.5'/>\n",
+    getPredioX(recebePredio),getPredioY(recebePredio),getPredioLargura(recebePredio),
+    getPredioAltura(recebePredio));
+
+    fprintf(saidaSvg,"\t<text x='%lf' y='%lf' fill-opacity='1.0' text-anchor='middle' fill ='black' text-size='1'>%d</text>\n",
+    getPredioTexX(recebePredio),getPredioTexY(recebePredio),getPredioNum(recebePredio));
+
+    fclose(saidaSvg);
 }
 
 void desenharMuro(char *fileName,Muro recebeMuro) {
@@ -127,7 +137,7 @@ void desenharMuro(char *fileName,Muro recebeMuro) {
 void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg) {
     FILE *saidaTxt = NULL;
     FILE *saidaSvg = NULL;
-    
+
     fprintf(saidaTxt,"%sINTERNO\n",linhaArquivo);
     fprintf(saidaSvg,"\t<circle r='5' cx='%lf' cy='%lf' stroke='green' fill='forestgreen' stroke-width='2'/>\n",x,y);
 

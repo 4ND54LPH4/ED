@@ -13,7 +13,7 @@ void desenharQuadra(char *fileName,Quadra recebeQuadra);
 void desenharHidrante(char *fileName,Hidrante recebeHidrante);
 void desenharSemaforo(char *fileName,Semaforo recebeSemaforo);
 void desenharRadio(char *fileName,Radio recebeRadio);
-void desenharPredio(FILE *saidaSvg);
+void desenharPredio(char *fileName,Predio recebePredio);
 void desenharMuro(char *fileName,Muro recebeMuro);
 
 void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg);

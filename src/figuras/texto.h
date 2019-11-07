@@ -10,5 +10,6 @@ double getTextoY(Texto recebeTexto);
 char *getTextoTexto(Texto recebeTexto);
 
 void removeTexto(Texto recebeTexto);
+int comparaTexto(Texto recebeTexto1,Texto recebeTexto2);
 
 #endif

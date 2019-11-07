@@ -13,7 +13,7 @@ typedef struct muro {
 Muro addMuro(char comandos[500],int pId) {
     double x1,y1,x2,y2;
     struct muro *temp = (struct muro*)malloc(sizeof(struct muro));
-    
+
     sscanf(comandos,"mur %lf %lf %lf %lf",&x1,&y1,&x2,&y2);
 
     temp->id = pId;
@@ -53,4 +53,35 @@ double getMuroY2(Muro recebeMuro) {
 void removeMuro(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     free(temp);
+}
+
+char* printValorMuro(Muro recebeMuro, char *dados) {
+    struct muro *temp = (struct muro*) recebeMuro;
+
+    sprintf(dados, "id: %d | x1: %lf | y1: %lf | x2: %lf | y2: %lf\n",temp->id, temp->x1,temp->y1, temp->x2, temp->y2);
+    return dados;
+}
+
+int comparaMuro(Muro recebeMuro1,Muro recebeMuro2) {
+    struct muro *temp1 = (struct muro*) recebeMuro1;
+    struct muro *temp2 = (struct muro*) recebeMuro2;
+
+    if(temp1->x1 > temp2->x1) {
+        return 1;
+    } else if(temp1->x1 < temp2->x1) {
+        return -1;
+    } else if(temp1->y1 > temp2->y1) {
+        return 1;
+    } else if(temp1->y1 < temp2->y1) {
+        return -1;
+    } else if(temp1->x2 > temp2->x2) {
+        return 1;
+    } else if(temp1->x2 < temp2->x2) {
+        return -1;
+    } else if(temp1->y2 > temp2->y2) {
+        return 1;
+    } else if(temp1->y2 < temp2->y2) {
+        return -1;
+    }
+    return 0;
 }

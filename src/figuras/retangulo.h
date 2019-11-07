@@ -5,7 +5,7 @@ typedef void *Retangulo;
 
 Retangulo addRetangulo(char comandos[500],double rw);
 
-int getRetanguloID(Retangulo recebeRetangulo);
+char* getRetanguloID(Retangulo recebeRetangulo);
 double getRetanguloX(Retangulo recebeRetangulo);
 double getRetanguloY(Retangulo recebeRetangulo);
 double getRetanguloAltura(Retangulo recebeRetangulo);
@@ -18,7 +18,8 @@ void setRetanguloX(Retangulo recebeRetangulo,double nX);
 void setRetanguloY(Retangulo recebeRetangulo,double nY);
 
 void removeRetangulo(Retangulo recebeRetangulo);
-void printValorRetangulo(Retangulo recebeRetangulo);
 int comparaRetangulo(Retangulo recebeRetangulo1,Retangulo recebeRetangulo2);
+int comparaIdRetangulo(Retangulo recebeRetangulo1,Retangulo recebeRetangulo2);
+int comparaKeyRetangulo(Retangulo recebeRetangulo, char* key);
 
 #endif

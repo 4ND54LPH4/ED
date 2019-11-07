@@ -85,6 +85,66 @@ char *getSvgSaida(char *localSaida,char *arquivo) {
     return result;
 }
 
+char *getSvgSaidaQry(char *localSaida,char *pGeo,char *pQry) {
+    char *result = NULL;
+    char *nomeArquivo1 = NULL;
+    char *nomeArquivo2 = NULL;
+
+    nomeArquivo1 = tiraExtensao(pGeo);
+    nomeArquivo2 = tiraExtensao(pQry);
+
+    result = (char*)malloc(sizeof(char)*(strlen(nomeArquivo1)+strlen(nomeArquivo2)+strlen(localSaida)+6));
+
+    strcpy(result,localSaida);
+    strcat(result,nomeArquivo1);
+    strcat(result,"-");
+    strcat(result,nomeArquivo2);
+    strcat(result,".svg");
+
+    free(nomeArquivo1);
+    free(nomeArquivo2);
+    return result;
+}
+
+char *getTxtSaidaQry(char *localSaida,char *pGeo,char *pQry) {
+    char *result = NULL;
+    char *nomeArquivo1 = NULL;
+    char *nomeArquivo2 = NULL;
+
+    nomeArquivo1 = tiraExtensao(pGeo);
+    nomeArquivo2 = tiraExtensao(pQry);
+
+    result = (char*)malloc(sizeof(char)*(strlen(nomeArquivo1)+strlen(nomeArquivo2)+strlen(localSaida)+6));
+
+    strcpy(result,localSaida);
+    strcat(result,nomeArquivo1);
+    strcat(result,"-");
+    strcat(result,nomeArquivo2);
+    strcat(result,".txt");
+
+    free(nomeArquivo1);
+    free(nomeArquivo2);
+    return result;
+}
+
+/*
+char *getTxtSaida(char *localSaida,char *arquivo) {
+    char *nomeArquivo = NULL;
+    char *result = NULL;
+
+    nomeArquivo = tiraExtensao(arquivo);
+
+    result = (char*)malloc(sizeof(char)*(strlen(nomeArquivo)+strlen(localSaida)+5));
+
+    strcpy(result,localSaida);
+    strcat(result,nomeArquivo);
+    strcat(result,".txt");
+
+    free(nomeArquivo);
+    return result;
+}*/
+
+
 char *tiraExtensao(char *arquivo) {
     int size;
 	char *temp=NULL;
@@ -130,8 +190,6 @@ char *tiraBarra(char *file) {
 	strcpy(temp1,file);
 	i = strlen(file) + 1;
     temp2 = (char*)calloc(strlen(file)+1,sizeof(char));
-	//temp2 = (char*)malloc(sizeof(char)*(strlen(file)+1));
-	//temp2[0] = '\0';
 	for(j=0;j<i-1;j++)
 	{
 		temp2[j] = temp1[j+1];
