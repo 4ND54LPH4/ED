@@ -3,6 +3,7 @@
 #include "../nx/nx.h"
 #include "../figuras/estrutura/hash.h"
 #include "../figuras/estrutura/rbtree.h"
+#include "functionsQry.h"
 
 void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSaida,nx qtdFiguras,
     struct tree **circulo,struct tree **retangulo,struct tree **texto,struct tree **hidrante,

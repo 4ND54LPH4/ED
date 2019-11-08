@@ -130,6 +130,7 @@ void removerObjetoHash(tabelaHash t, char* key) {
 		//tabelaHash->deleteHash(tabelaHash->tree, n->objetoHash);
         //free(n); //apagar
 		tabelaHash->hash[i] = NULL;
+		free(n);
 	} else {
 		pList aux = n;
 

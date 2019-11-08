@@ -72,6 +72,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
             printf("bb\n");
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='q') {
+            comandoDq(linhaArquivo, temp2, temp3, hidrante, semaforo, radio, quadra, (tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
             printf("dq\n");
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='e' && linhaArquivo[2]=='l') {
