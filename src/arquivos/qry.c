@@ -114,7 +114,6 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='?') {
             //Moradores da quadra cujo cep é cep. Mostra mensagem de erro se quadra não existir.
-            printf("m?\n");
             comandoMoradores(linhaArquivo, temp3, (tabelaHash)hashQuad, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='p' && linhaArquivo[2]=='l') {
@@ -123,11 +122,11 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='?') {
             //Imprime todos os dados do morador identificado pelo cpf.
-            printf("dm?\n");
+            comandoDm(linhaArquivo, temp3, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='e' && linhaArquivo[2]=='?') {
             //Imprime todos os dados do estabelecimento comercial identificado por cnpj.
-            printf("de?\n");
+            comandoDe(linhaArquivo, temp3, (tabelaHash)hashEst);
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='u' && linhaArquivo[2]=='d') {
             //A pessoa identificada por cpf muda-se para o endereço determinado pelos parâmetros.
@@ -144,7 +143,6 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='p') {
             //Imprime o estado atual de uma árvore no arquivo arq.svg.
             comandoDmprbt(linhaArquivo, localSaida, hidrante, semaforo, radio, quadra, predio, muro);
-            printf("dmprbt\n");
 
         }
     }

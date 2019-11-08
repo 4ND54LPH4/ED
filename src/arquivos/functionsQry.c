@@ -11,7 +11,7 @@
 
 
 // Função para exemplo de consulta nas trees e hash
-void comandoDq (char* comandos, char* temp2, char* temp3, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
+void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
     char metrica[3], id[50];
     double dist1, dist2, x1, y1, x2, y2, w1, h1;
     int tam;
@@ -155,7 +155,6 @@ void comandoMoradores(char* comandos, char* nomeTxt, tabelaHash **hashQuad, tabe
                     n = getProxHash(n);
                     m = getObjetoHash2(aux);
                     if (!strcmp(getMoradorCep(m),id)) {
-                        printf("teste\n");
                         sprintf(result, "CPF: %s | Nome Completo: %s %s | Sexo: %s | Nascimento: %s | CEP: %s | Face: %c | Num: %d | Complemento: %s", getMoradorCpf(m), getMoradorNome(m), getMoradorSobrenome(m), getMoradorSexo(m) == 'M' ? "Masculino" : "Feminino", getMoradorNascimento(m), getMoradorCep(m), getMoradorFace(m), getMoradorNum(m), getMoradorCompl(m));
                         escreverTextoTxt(nomeTxt, result);
                         escreverTextoTxt(nomeTxt, "\n");
@@ -166,6 +165,27 @@ void comandoMoradores(char* comandos, char* nomeTxt, tabelaHash **hashQuad, tabe
         }
     } else {
         escreverTextoTxt(nomeTxt, "Quadra não existente!");
+        escreverTextoTxt(nomeTxt, "\n");
     }
+    escreverTextoTxt(nomeTxt, "\n");
+}
+
+void comandoDm(char* comandos, char* nomeTxt, tabelaHash **hashMor) {
+    char cpf[15], result[500];
+    sscanf(comandos, "dm? %s", cpf);
+    escreverTextoTxt(nomeTxt, comandos);
+    Morador m = getObjetoHash(*hashMor, cpf);
+    sprintf(result, "CPF: %s | Nome Completo: %s %s | Sexo: %s | Nascimento: %s | CEP: %s | Face: %c | Num: %d | Complemento: %s\n", getMoradorCpf(m), getMoradorNome(m), getMoradorSobrenome(m), getMoradorSexo(m) == 'M' ? "Masculino" : "Feminino", getMoradorNascimento(m), getMoradorCep(m), getMoradorFace(m), getMoradorNum(m), getMoradorCompl(m));
+    escreverTextoTxt(nomeTxt, result);
+    escreverTextoTxt(nomeTxt, "\n");
+}
+
+void comandoDe(char* comandos, char* nomeTxt, tabelaHash **hashEst) {
+    char cnpj[19], result[500];
+    sscanf(comandos, "de? %s", cnpj);
+    escreverTextoTxt(nomeTxt, comandos);
+    Estabelecimento e = getObjetoHash(*hashEst, cnpj);
+    sprintf(result, "CNPJ: %s | Nome: %s | Descrição do tipo: %s | CEP: %s | Face: %c | Proprietario: %s %s| CPF: %s | Sexo: %s | Nascimento: %s\n", getEstabelecimentoCnpj(e), getEstabelecimentoNome(e), getEstabelecimentoDescricao(e), getEstabelecimentoCep(e), getEstabelecimentoFace(e), getEstabelecimentoProprietarioNome(e), getEstabelecimentoProprietarioSobrenome(e), getEstabelecimentoCpf(e), getEstabelecimentoProprietarioSexo(e) == 'M' ? "Masculino" : "Feminino", getEstabelecimentoProprietarioNascimento(e));
+    escreverTextoTxt(nomeTxt, result);
     escreverTextoTxt(nomeTxt, "\n");
 }

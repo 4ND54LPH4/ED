@@ -56,14 +56,14 @@ int main(int argc,char *argv[]) {
     // Comandos do arquivo .geo
     processarComandosGeo(pGeo,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd);
 
-    // Comandos do arquivo .ec (caso exista)
-    if(estabComercial != NULL) {
-        processarComandosEc(estabComercial,localEntrada,localSaida,quantidadeFiguras, &tipoEstabelecimento, &estabelecimento, (tabelaHash)&hashTipEst, (tabelaHash)&hashEst, (tabelaHash)&hashPes);
-    }
-
     // Comandos do arquivo .pm (caso exista)
     if(pessoas != NULL) {
         processarComandosPm(pessoas,localEntrada,localSaida,quantidadeFiguras, &pessoa, &morador, (tabelaHash)&hashPes, (tabelaHash)&hashMor);
+    }
+
+    // Comandos do arquivo .ec (caso exista)
+    if(estabComercial != NULL) {
+        processarComandosEc(estabComercial,localEntrada,localSaida,quantidadeFiguras, &tipoEstabelecimento, &estabelecimento, (tabelaHash)&hashTipEst, (tabelaHash)&hashEst, (tabelaHash)&hashPes);
     }
 
     // Comandos do arquivo .qry (caso exista)
