@@ -130,7 +130,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='u' && linhaArquivo[2]=='d') {
             //A pessoa identificada por cpf muda-se para o endereço determinado pelos parâmetros.
-            printf("mud\n");
+            comandoMud(linhaArquivo, temp3, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='e' && linhaArquivo[1]=='p' && linhaArquivo[2]=='l') {
             //Estabelecimentos comerciais do tipo tp (ou de qualquer tipo, caso *) que estão inteiramente dentro da região delimitada pelo polígono.

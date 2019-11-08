@@ -189,3 +189,18 @@ void comandoDe(char* comandos, char* nomeTxt, tabelaHash **hashEst) {
     escreverTextoTxt(nomeTxt, result);
     escreverTextoTxt(nomeTxt, "\n");
 }
+
+void comandoMud(char* comandos, char* nomeTxt, tabelaHash **hashMor) {
+    char cpf[15], cep[50], face, compl[50], result[500];
+    int num;
+    sscanf(comandos, "mud %s %s %c %d %s", cpf, cep, &face, &num, compl);
+    escreverTextoTxt(nomeTxt, comandos);
+    Morador m = getObjetoHash(*hashMor, cpf);
+    sprintf(result, "CPF: %s | Nome Completo: %s %s | Sexo: %s | Nascimento: %s | CEP Antigo: %s | Face Antiga: %c | Num Antigo: %d | Complemento Antigo: %s | CEP Novo: %s | Face Nova: %c | Num Novo: %d | Complemento Novo: %s", cpf, getMoradorNome(m), getMoradorSobrenome(m), getMoradorSexo(m) == 'M' ? "Masculino" : "Feminino", getMoradorNascimento(m), getMoradorCep(m), getMoradorFace(m), getMoradorNum(m), getMoradorCompl(m), cep, face, num, compl);
+    setMoradorCep(m, cep);
+    setMoradorFace(m, face);
+    setMoradorNum(m, num);
+    setMoradorCompl(m, compl);
+    escreverTextoTxt(nomeTxt, result);
+    escreverTextoTxt(nomeTxt, "\n");
+}

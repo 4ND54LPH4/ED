@@ -9,5 +9,6 @@ void comandoDmprbt(char* comandos, char* localSaida, struct tree **hidrante, str
 void comandoMoradores(char* comandos, char* nomeTxt, tabelaHash **hashQuad, tabelaHash **hashMor);
 void comandoDm(char* comandos, char* nomeTxt, tabelaHash **hashMor);
 void comandoDe(char* comandos, char* nomeTxt, tabelaHash **hashEst);
+void comandoMud(char* comandos, char* nomeTxt, tabelaHash **hashMor);
 
 #endif
