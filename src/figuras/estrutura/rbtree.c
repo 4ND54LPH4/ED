@@ -14,12 +14,12 @@ struct tree {
     int (*cmpTree)(void *a, void *b);
     int (*cmpIdTree)(void *a, void *b);
     void (*delete)(void *a);
-    char* (*print)(void *a, char *dados);
+    void (*print)(char* arqSvg, void *a);
     struct node *raiz, *nil;
     unsigned int tamanho;
 };
 
-struct tree *criarTree(int (*cmpTreeFunc)(void*, void*), int (*cmpIdTreeFunc)(void*, void*), void (*deleteFunc)(void*), char* (*printFunc)(void*, char*)) {
+struct tree *criarTree(int (*cmpTreeFunc)(void*, void*), int (*cmpIdTreeFunc)(void*, void*), void (*deleteFunc)(void*), void (*printFunc)(char*, void*)) {
     struct tree *tree;
     struct node *temp;
 
@@ -256,25 +256,37 @@ void deleteTree(struct tree *tree) {
 
 int Y_PRINT_ARVORE = 15;
 // Funcao interna para recursivamente printar toda a arvore em ordem
-static void printOrdenadoTree(struct tree *tree, int x1, struct node *x, char* nomeArq) {
+static void printOrdenadoTree(struct tree *tree, int x1, struct node *x, char* nomeArq, char* (*printFunc)(void*, char*)) {
     FILE *arqSvg = fopen(nomeArq, "a+");
 
     if (x != tree->nil) {
         x1+=20;
-    	printOrdenadoTree(tree, x1, x->left, nomeArq);
+    	printOrdenadoTree(tree, x1, x->left, nomeArq, printFunc);
 
         fprintf(arqSvg, "<circle r='5' cx='%d' cy='%d' stroke='black' fill='%s' stroke-width='1'/>\n", Y_PRINT_ARVORE, x1, x->cor == 0 ? "black" : "red");
         char dados[150];
-        fprintf(arqSvg, "<text x='%d' y='%d' fill='black' font-size='5'>%s</text>\n", Y_PRINT_ARVORE, x1, tree->print(x->objeto, dados));
+        fprintf(arqSvg, "<text x='%d' y='%d' fill='black' font-size='5'>%s</text>\n", Y_PRINT_ARVORE, x1, printFunc(x->objeto, dados));
 
         Y_PRINT_ARVORE+=15;
-    	printOrdenadoTree(tree, x1, x->right, nomeArq);
+    	printOrdenadoTree(tree, x1, x->right, nomeArq, printFunc);
     }
     fclose(arqSvg);
 }
 
-void printTree(struct tree *tree, char *nomeArq) {
-    printOrdenadoTree(tree, 0, tree->raiz->left, nomeArq);
+void printTree(struct tree *tree, char *nomeArq, char* (*printFunc)(void*, char*)) {
+    printOrdenadoTree(tree, 0, tree->raiz->left, nomeArq, printFunc);
+}
+
+static void treeToSvgAux(struct tree *tree, struct node *x, char *nomeArq) {
+    if (x != tree->nil) {
+        treeToSvgAux(tree, x->left, nomeArq);
+        tree->print(nomeArq, x->objeto);
+        treeToSvgAux(tree, x->right, nomeArq);
+    }
+}
+
+void treeToSvg(struct tree *tree, char *nomeArq) {
+    treeToSvgAux(tree, tree->raiz->left, nomeArq);
 }
 
 struct node *findTree(struct tree *tree, void *objeto) {

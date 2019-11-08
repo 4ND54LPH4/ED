@@ -38,15 +38,15 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
     double cw=1.5;
     double rw=1.5,cq=1.5,ch=1.5,cr=1.5,cs=1.5,cp=1.5;
     // Variáveis das trees das figuras
-    *circulo = criarTree(comparaCirculo, comparaIdCirculo, removeCirculo, NULL);
-    *retangulo = criarTree(comparaRetangulo, comparaIdRetangulo, removeRetangulo, NULL);
-    *texto = criarTree(comparaTexto, NULL, removeTexto, NULL);
-    *hidrante = criarTree(comparaHidrante, comparaIdHidrante, removeHidrante, printValorHidrante);
-    *quadra = criarTree(comparaQuadra, comparaIdQuadra, removeQuadra, printValorQuadra);
-    *semaforo = criarTree(comparaSemaforo, comparaIdSemaforo, removeSemaforo, printValorSemaforo);
-    *radio = criarTree(comparaRadio, comparaIdRadio, removeRadio, printValorRadio);
-    *muro = criarTree(comparaMuro, NULL, removeMuro, printValorMuro);
-    *predio = criarTree(comparaPredio, comparaIdPredio, removePredio, printValorPredio);
+    *circulo = criarTree(comparaCirculo, comparaIdCirculo, removeCirculo, desenharCirculo);
+    *retangulo = criarTree(comparaRetangulo, comparaIdRetangulo, removeRetangulo, desenharRetangulo);
+    *texto = criarTree(comparaTexto, NULL, removeTexto, escreverTexto);
+    *hidrante = criarTree(comparaHidrante, comparaIdHidrante, removeHidrante, desenharHidrante);
+    *quadra = criarTree(comparaQuadra, comparaIdQuadra, removeQuadra, desenharQuadra);
+    *semaforo = criarTree(comparaSemaforo, comparaIdSemaforo, removeSemaforo, desenharSemaforo);
+    *radio = criarTree(comparaRadio, comparaIdRadio, removeRadio, desenharRadio);
+    *muro = criarTree(comparaMuro, NULL, removeMuro, desenharMuro);
+    *predio = criarTree(comparaPredio, comparaIdPredio, removePredio, desenharPredio);
     // Variáveis das hash das figuras
     *hashCirc = criarTabelaHash(1000, comparaKeyCirculo, getCirculoID);
     *hashRet = criarTabelaHash(1000, comparaKeyRetangulo, getRetanguloID);

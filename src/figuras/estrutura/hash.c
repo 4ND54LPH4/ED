@@ -127,7 +127,6 @@ void removerObjetoHash(tabelaHash t, char* key) {
     int i = hash(t, key);
 	pList n = tabelaHash->hash[i];
 	if(n->prox == NULL  && tabelaHash->cmpHash(n->objetoHash, key) == 0) {
-		//tabelaHash->deleteHash(tabelaHash->tree, n->objetoHash);
         //free(n); //apagar
 		tabelaHash->hash[i] = NULL;
 		free(n);
@@ -135,21 +134,21 @@ void removerObjetoHash(tabelaHash t, char* key) {
 		pList aux = n;
 
 		while(aux != NULL) {
+			n = n->prox;
 			if(tabelaHash->cmpHash(aux->objetoHash, key) == 0) {
-				n = n->prox;
-				free(aux);
-				aux = n;
+				//free(aux);
+				aux = NULL;
 			}
-
+			aux = n;
 			/*
-				//tabelaHash->deleteHash(tabelaHash->tree, aux->objetoHash);
 				//aux = NULL;
 				aux = NULL;
 				break;
 			}*/
-			//aux = aux->prox;
+
 		}
-		tabelaHash->hash[i] = NULL;
+		//tabelaHash->hash[i] = NULL;
+		free(n);
         //free(aux); //apagar
 	}
 }

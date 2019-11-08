@@ -3,6 +3,7 @@
 #include <string.h>
 #include "qry.h"
 #include "../util/util.h"
+#include "../svg/svg.h"
 
 
 void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSaida,nx qtdFiguras,
@@ -137,6 +138,17 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         }
     }
+    iniciarSvg(temp2);
+    treeToSvg(*circulo, temp2);
+    treeToSvg(*retangulo, temp2);
+    treeToSvg(*texto, temp2);
+    treeToSvg(*hidrante, temp2);
+    treeToSvg(*quadra, temp2);
+    treeToSvg(*semaforo, temp2);
+    treeToSvg(*radio, temp2);
+    treeToSvg(*predio, temp2);
+    treeToSvg(*muro, temp2);
+    finalizarSvg(temp2);
 
     // Fecha arquivo de leitura
     fclose(arquivoEntrada);

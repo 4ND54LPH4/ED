@@ -13,7 +13,7 @@ struct tree;
 */
 
 // Cria uma nova arvore rubro negra. Todos os ponteiros das funcoes devem ser passados como parametros. Retorna um novo objeto de arvore
-struct tree *criarTree(int (*cmpTreeFunc)(void*, void*), int (*cmpIdTreeFunc)(void*, void*), void (*deleteFunc)(void*), char* (*printFunc)(void*, char*));
+struct tree *criarTree(int (*cmpTreeFunc)(void*, void*), int (*cmpIdTreeFunc)(void*, void*), void (*deleteFunc)(void*), void (*printFunc)(char*, void*));
 
 // Retorna true se a arvore esta vazio
 int verificaVazioTree(struct tree *tree);
@@ -40,7 +40,10 @@ struct node *antecessorTree(struct tree *tree, struct node *x);
 void deleteTree(struct tree *tree);
 
 // Printar toda a arvore utilizando a funcao print do objeto
-void printTree(struct tree *tree, char *nomeArq);
+void printTree(struct tree *tree, char *nomeArq, char* (*printFunc)(void*, char*));
+
+// Printar a tree no svg
+void treeToSvg(struct tree *tree, char *nomeArq);
 
 // Procura o primeiro node correspondente a key. Retorna NULL se nao encontrar
 struct node *findTree(struct tree *tree, void *objeto);
