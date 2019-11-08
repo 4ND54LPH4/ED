@@ -21,5 +21,6 @@ void escreverPontoNaoInterno(double x,double y,char linhaArquivo[500],char *sTxt
 void escreverRetaDistancia(double xInicio, double yInicio,double xFinal,double yFinal,char *cor,char *sSvg);
 void escreverDistanciaSvg(double x,double y,double distancia,char *sSvg);
 void escreverDistanciaTxt(char linhaArquivo[500],double distancia,char *sTxt);
+void escreverTextoTxt(char *nomeArq, char* texto);
 
 #endif

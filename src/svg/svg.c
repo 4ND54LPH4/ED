@@ -179,3 +179,9 @@ void escreverDistanciaTxt(char linhaArquivo[500],double distancia,char *sTxt) {
 
     fclose(saidaTxt);
 }
+
+void escreverTextoTxt(char *nomeArq, char* texto) {
+    FILE *saidaTxt = fopen(nomeArq, "a");
+    fprintf(saidaTxt, "%s", texto);
+    fclose(saidaTxt);
+}

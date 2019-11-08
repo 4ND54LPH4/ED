@@ -108,11 +108,20 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
             // Determinar os k semaforos mais proximos do endereço cep,face,num.
             printf("fs\n");
 
+        } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='r' && linhaArquivo[2] == 'n') {
+            //Detonada bomba de radiação nuclear na coordenada (x,y)
+            printf("brn\n");
+
+        } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='?') {
+            //Moradores da quadra cujo cep é cep. Mostra mensagem de erro se quadra não existir.
+            printf("m?\n");
+            comandoMoradores(linhaArquivo, temp3, (tabelaHash)hashQuad, (tabelaHash)hashMor);
+
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='p' && linhaArquivo[2]=='l') {
             // Moradores dos prédios inteiramente contidos na região delimitada pelo polígono e as quadras que estão ao menos parcialmente dentro da delimitada pelo polígono.
             printf("mplg?\n");
 
-        } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m') {
+        } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='?') {
             //Imprime todos os dados do morador identificado pelo cpf.
             printf("dm?\n");
 
@@ -134,6 +143,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='p') {
             //Imprime o estado atual de uma árvore no arquivo arq.svg.
+            comandoDmprbt(linhaArquivo, localSaida, hidrante, semaforo, radio, quadra, predio, muro);
             printf("dmprbt\n");
 
         }

@@ -90,3 +90,82 @@ void comandoDq (char* comandos, char* temp2, char* temp3, struct tree **hidrante
         }
     }
 }
+
+void comandoDmprbt(char* comandos, char* localSaida, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, struct tree**predio, struct tree**muro) {
+    char nomeArq[50], t, *temp1 = NULL;
+    Quadra q;
+    Hidrante h;
+    Semaforo s;
+    Radio r;
+    Predio p;
+    Muro m;
+    sscanf(comandos, "dmprbt %c %s", &t, nomeArq);
+    strcat(nomeArq, ".svg");
+    temp1 = getArquivo(localSaida, nomeArq);
+
+    iniciarSvg(temp1);
+
+    if (t == 'q') {
+        printTree(*quadra, temp1, printValorQuadra);
+    } else if (t == 'h') {
+        printTree(*hidrante, temp1, printValorHidrante);
+    } else if (t == 's') {
+        printTree(*semaforo, temp1, printValorSemaforo);
+    } else if (t == 't') {
+        printTree(*radio, temp1, printValorRadio);
+    } else if (t == 'p') {
+        printTree(*predio, temp1, printValorPredio);
+    } else if (t == 'm') {
+        printTree(*muro, temp1, printValorMuro);
+    }
+    finalizarSvg(temp1);
+
+    free(temp1);
+}
+
+void comandoMoradores(char* comandos, char* nomeTxt, tabelaHash **hashQuad, tabelaHash **hashMor) {
+    char id[50], result[500];
+    int verifica = 0, tamQuadra = getTamHash(*hashQuad), tamMorador = getTamHash(*hashMor);
+    Morador m;
+    Quadra q;
+    sscanf(comandos, "m? %s", id);
+    escreverTextoTxt(nomeTxt, comandos);
+
+    for (int i = 0; i < tamQuadra; i++) {
+        listaHash n = getIndiceHash(*hashQuad, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                q = getObjetoHash2(aux);
+                if (!strcmp(getQuadraId(q), id)) {
+                    verifica = 1;
+                }
+                aux = n;
+            }
+        }
+    }
+
+    if (verifica == 1) {
+        for (int i = 0; i < tamMorador; i++) {
+            listaHash n = getIndiceHash(*hashMor, i);
+            if (n != NULL) {
+                listaHash aux = n;
+                while (aux != NULL) {
+                    n = getProxHash(n);
+                    m = getObjetoHash2(aux);
+                    if (!strcmp(getMoradorCep(m),id)) {
+                        printf("teste\n");
+                        sprintf(result, "CPF: %s | Nome Completo: %s %s | Sexo: %s | Nascimento: %s | CEP: %s | Face: %c | Num: %d | Complemento: %s", getMoradorCpf(m), getMoradorNome(m), getMoradorSobrenome(m), getMoradorSexo(m) == 'M' ? "Masculino" : "Feminino", getMoradorNascimento(m), getMoradorCep(m), getMoradorFace(m), getMoradorNum(m), getMoradorCompl(m));
+                        escreverTextoTxt(nomeTxt, result);
+                        escreverTextoTxt(nomeTxt, "\n");
+                    }
+                    aux = n;
+                }
+            }
+        }
+    } else {
+        escreverTextoTxt(nomeTxt, "Quadra não existente!");
+    }
+    escreverTextoTxt(nomeTxt, "\n");
+}
