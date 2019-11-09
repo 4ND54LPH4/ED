@@ -11,7 +11,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
     struct tree **tipoEstabelecimento, struct tree **estabelecimento,struct tree **pessoa,struct tree**morador,
     tabelaHash **hashCirc,tabelaHash **hashRet,tabelaHash **hashHid,
     tabelaHash **hashQuad,tabelaHash **hashSem,tabelaHash **hashRad,
-    tabelaHash **hashPrd,tabelaHash **hashTipEst,tabelaHash **hashEst,
-    tabelaHash **hashPes,tabelaHash **hashMor);
+    tabelaHash **hashPrd,tabelaHash **hashMur,tabelaHash **hashTipEst,
+    tabelaHash **hashEst,tabelaHash **hashPes,tabelaHash **hashMor);
 
 #endif

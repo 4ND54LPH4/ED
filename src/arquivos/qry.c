@@ -12,8 +12,8 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
     struct tree **tipoEstabelecimento, struct tree **estabelecimento,struct tree **pessoa,struct tree**morador,
     tabelaHash **hashCirc,tabelaHash **hashRet,tabelaHash **hashHid,
     tabelaHash **hashQuad,tabelaHash **hashSem,tabelaHash **hashRad,
-    tabelaHash **hashPrd,tabelaHash **hashTipEst,tabelaHash **hashEst,
-    tabelaHash **hashPes,tabelaHash **hashMor) {
+    tabelaHash **hashPrd,tabelaHash **hashMur,tabelaHash **hashTipEst,
+    tabelaHash **hashEst,tabelaHash **hashPes,tabelaHash **hashMor) {
     // Variável para leitura da linha do arquivo
     char linhaArquivo[500];
     // Variáveis auxiliares para abertura do arquivo
@@ -52,7 +52,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
         printf("Erro ao criar arquivo\n");
         exit(0);
     }
-
+    iniciarSvg(temp2);
     // Lê e executa comandos
     while(fgets(linhaArquivo,500,arquivoEntrada)!=NULL) {
         if(linhaArquivo[0]=='o' && linhaArquivo[1]=='?') {
@@ -94,7 +94,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='r' && linhaArquivo[2]=='l') {
             // Detonada bomba de radiação luminosa na coordenada (x,y)
-            printf("brl\n");
+            comandoBrl(linhaArquivo, temp2, (tabelaHash)hashQuad, (tabelaHash)hashPrd, (tabelaHash)hashMur);
 
         } else if(linhaArquivo[0]=='f' && linhaArquivo[1]=='i') {
             // Foco de incendio. Encontrar os ns semaforos mais proximos do foco e os hidrantes que estejam a uma distancia de ate r do foco.
@@ -110,7 +110,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='r' && linhaArquivo[2] == 'n') {
             //Detonada bomba de radiação nuclear na coordenada (x,y)
-            printf("brn\n");
+            comandoBrn(linhaArquivo, localEntrada, temp2, (tabelaHash)hashMur);
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='?') {
             //Moradores da quadra cujo cep é cep. Mostra mensagem de erro se quadra não existir.
@@ -146,7 +146,6 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         }
     }
-    iniciarSvg(temp2);
     treeToSvg(*circulo, temp2);
     treeToSvg(*retangulo, temp2);
     treeToSvg(*texto, temp2);

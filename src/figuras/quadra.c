@@ -5,17 +5,17 @@
 
 typedef struct quadra {
     char id[MAX];
-    double x,y,w,h,cq;
+    float x,y,w,h,cq;
     char cfill[MAX],cstrk[MAX];
 } *pQuadra;
 
 
-Quadra addQuadra(char comandos[500],double cq,char cfill[MAX],char cstrk[MAX]) {
+Quadra addQuadra(char comandos[500],float cq,char cfill[MAX],char cstrk[MAX]) {
     char id[MAX];
-    double x=0,y=0,w=0,h=0;
+    float x=0,y=0,w=0,h=0;
     struct quadra *temp = (struct quadra*)calloc(1,sizeof(struct quadra));
 
-    sscanf(comandos,"q %s %lf %lf %lf %lf",id,&x,&y,&w,&h);
+    sscanf(comandos,"q %s %f %f %f %f",id,&x,&y,&w,&h);
 
     strcpy(temp->id,id);
     temp->x = x;
@@ -34,22 +34,22 @@ char *getQuadraId(Quadra recebeQuadra) {
     return temp->id;
 }
 
-double getQuadraX(Quadra recebeQuadra) {
+float getQuadraX(Quadra recebeQuadra) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     return temp->x;
 }
 
-double getQuadraY(Quadra recebeQuadra) {
+float getQuadraY(Quadra recebeQuadra) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     return temp->y;
 }
 
-double getQuadraLargura(Quadra recebeQuadra) {
+float getQuadraLargura(Quadra recebeQuadra) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     return temp->w;
 }
 
-double getQuadraAltura(Quadra recebeQuadra) {
+float getQuadraAltura(Quadra recebeQuadra) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     return temp->h;
 }
@@ -64,17 +64,17 @@ char *getQuadraCstrk(Quadra recebeQuadra) {
     return temp->cstrk;
 }
 
-double getQuadraCq(Quadra recebeQuadra) {
+float getQuadraCq(Quadra recebeQuadra) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     return temp->cq;
 }
 
-void setQuadraX(Quadra recebeQuadra,double nX) {
+void setQuadraX(Quadra recebeQuadra,float nX) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     temp->x = nX;
 }
 
-void setQuadraY(Quadra recebeQuadra,double nY) {
+void setQuadraY(Quadra recebeQuadra,float nY) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
     temp->y = nY;
 }

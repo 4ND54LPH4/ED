@@ -15,6 +15,8 @@ void desenharSemaforo(char *fileName,Semaforo recebeSemaforo);
 void desenharRadio(char *fileName,Radio recebeRadio);
 void desenharPredio(char *fileName,Predio recebePredio);
 void desenharMuro(char *fileName,Muro recebeMuro);
+void desenharBomba(char *fileName, float x, float y);
+void desenharLinha(char *fileName, float x1, float x2, float y1, float y2);
 
 void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg);
 void escreverPontoNaoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg);

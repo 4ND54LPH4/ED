@@ -4,19 +4,19 @@
 
 typedef void *Quadra;
 
-Quadra addQuadra(char comandos[500],double cq,char cfill[MAX],char cstrk[MAX]);
+Quadra addQuadra(char comandos[500],float cq,char cfill[MAX],char cstrk[MAX]);
 
 char *getQuadraId(Quadra recebeQuadra);
-double getQuadraX(Quadra recebeQuadra);
-double getQuadraY(Quadra recebeQuadra);
-double getQuadraLargura(Quadra recebeQuadra);
-double getQuadraAltura(Quadra recebeQuadra);
+float getQuadraX(Quadra recebeQuadra);
+float getQuadraY(Quadra recebeQuadra);
+float getQuadraLargura(Quadra recebeQuadra);
+float getQuadraAltura(Quadra recebeQuadra);
 char *getQuadraCfill(Quadra recebeQuadra);
 char *getQuadraCstrk(Quadra recebeQuadra);
-double getQuadraCq(Quadra recebeQuadra);
+float getQuadraCq(Quadra recebeQuadra);
 
-void setQuadraX(Quadra recebeQuadra,double nX);
-void setQuadraY(Quadra recebeQuadra,double nY);
+void setQuadraX(Quadra recebeQuadra,float nX);
+void setQuadraY(Quadra recebeQuadra,float nY);
 void setQuadraCfill(Quadra recebeQuadra,char cfill[MAX]);
 void setQuadraCstrk(Quadra recebeQuadra,char cstrk[MAX]);
 

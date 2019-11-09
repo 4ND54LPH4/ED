@@ -33,6 +33,7 @@ int main(int argc,char *argv[]) {
     struct tabelaHash *hashSem;
     struct tabelaHash *hashRad;
     struct tabelaHash *hashPrd;
+    struct tabelaHash *hashMur;
     struct tabelaHash *hashPes;
     struct tabelaHash *hashMor;
     struct tabelaHash *hashTipEst;
@@ -54,7 +55,7 @@ int main(int argc,char *argv[]) {
     }
 
     // Comandos do arquivo .geo
-    processarComandosGeo(pGeo,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd);
+    processarComandosGeo(pGeo,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashMur);
 
     // Comandos do arquivo .pm (caso exista)
     if(pessoas != NULL) {
@@ -68,12 +69,12 @@ int main(int argc,char *argv[]) {
 
     // Comandos do arquivo .qry (caso exista)
     if(pQry != NULL) {
-        processarComandosQry(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
+        processarComandosQry(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashMur,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
     }
 
     // Entra no modo interativo (caso seja solicitado)
     if(modoInterativo) {
-        processarInterativo(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
+        processarInterativo(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashMur,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
     }
 
     // PRINTANDO AS VARIÁVEIS P TESTA ESSA MERDA
@@ -83,6 +84,7 @@ int main(int argc,char *argv[]) {
     destruirTabelaHash(hashCirc);
     destruirTabelaHash(hashRet);
     destruirTabelaHash(hashPrd);
+    destruirTabelaHash(hashMur);
     destruirTabelaHash(hashQuad);
     destruirTabelaHash(hashHid);
     destruirTabelaHash(hashSem);

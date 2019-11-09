@@ -5,18 +5,18 @@
 
 
 typedef struct muro {
-    int id;
-    double x1,x2,y1,y2;
+    char id[50];
+    float x1,x2,y1,y2;
 } *pMuro;
 
 
-Muro addMuro(char comandos[500],int pId) {
-    double x1,y1,x2,y2;
+Muro addMuro(char comandos[500],char* pId) {
+    float x1,y1,x2,y2;
     struct muro *temp = (struct muro*)malloc(sizeof(struct muro));
 
-    sscanf(comandos,"mur %lf %lf %lf %lf",&x1,&y1,&x2,&y2);
+    sscanf(comandos,"mur %f %f %f %f",&x1,&y1,&x2,&y2);
 
-    temp->id = pId;
+    strcpy(temp->id, pId);
     temp->x1 = x1;
     temp->y1 = y1;
     temp->x2 = x2;
@@ -25,27 +25,27 @@ Muro addMuro(char comandos[500],int pId) {
     return (void*)temp;
 }
 
-int getMuroId(Muro recebeMuro) {
+char* getMuroId(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     return temp->id;
 }
 
-double getMuroX1(Muro recebeMuro) {
+float getMuroX1(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     return temp->x1;
 }
 
-double getMuroY1(Muro recebeMuro) {
+float getMuroY1(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     return temp->y1;
 }
 
-double getMuroX2(Muro recebeMuro) {
+float getMuroX2(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     return temp->x2;
 }
 
-double getMuroY2(Muro recebeMuro) {
+float getMuroY2(Muro recebeMuro) {
     struct muro *temp = (struct muro*) recebeMuro;
     return temp->y2;
 }
@@ -58,7 +58,7 @@ void removeMuro(Muro recebeMuro) {
 char* printValorMuro(Muro recebeMuro, char *dados) {
     struct muro *temp = (struct muro*) recebeMuro;
 
-    sprintf(dados, "id: %d | x1: %lf | y1: %lf | x2: %lf | y2: %lf\n",temp->id, temp->x1,temp->y1, temp->x2, temp->y2);
+    sprintf(dados, "id: %s | x1: %lf | y1: %lf | x2: %lf | y2: %lf\n",temp->id, temp->x1,temp->y1, temp->x2, temp->y2);
     return dados;
 }
 
@@ -84,4 +84,10 @@ int comparaMuro(Muro recebeMuro1,Muro recebeMuro2) {
         return -1;
     }
     return 0;
+}
+
+int comparaKeyMuro(Muro recebeMuro,char *key) {
+    struct muro *temp = (struct muro*) recebeMuro;
+
+    return strcmp(temp->id, key);
 }
