@@ -10,6 +10,211 @@
 #include <math.h>
 
 
+// COMANDOS T1
+
+// Comando "o?"
+// Com erro
+/*
+void comandoOverlap(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
+    char id1[20],id2[20];
+    int overlap = 0;
+    // Arquivos de saída
+    FILE *arquivoSaidaSvg = NULL;
+    FILE *arquivoSaidaTxt = NULL;
+
+    arquivoSaidaSvg = fopen(saidaSvg,"a+");
+    arquivoSaidaTxt = fopen(saidaTxt,"a+");
+
+    if(arquivoSaidaSvg == NULL || arquivoSaidaTxt == NULL) {
+        printf("Erro ao abrir arquivo\n");
+        exit(0);
+    }
+
+    sscanf(linhaArquivo,"o? %s %s",id1,id2);
+
+    Circulo c1;
+    Circulo c2;
+    Retangulo r1;
+    Retangulo r2;
+
+    if((c1 = getObjetoHash(*hashCirc,id1)) != NULL) {
+        if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
+            // 2 circulos
+        } else {
+            r2 = getObjetoHash(*hashRet,id2);
+            // Circulo Retangulo
+
+        }
+    } else {
+        r1 = getObjetoHash(*hashRet,id1);
+        if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
+            // Retangulo Circulo
+
+        } else {
+            r2 = getObjetoHash(*hashRet,id2);
+            // 2 retangulos
+
+        }
+    }
+
+    if(overlap) {
+
+    } else {
+
+    }
+
+    fclose(arquivoSaidaSvg);
+    fclose(arquivoSaidaTxt);
+}*/
+
+// Comandos "i?"
+void comandoInterno(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
+    char id[20];
+    double x,y;
+    double x1Figura,y1Figura,x2Figura,y2Figura,raio;
+    double distancia,distAux;
+    double dx,dy;
+
+    Circulo c;
+    Retangulo r;
+
+    sscanf(linhaArquivo,"i? %s %lf %lf",id,&x,&y);
+
+    if((c = getObjetoHash(*hashCirc,id)) != NULL) {
+        x1Figura = getCirculoX(c);
+        y1Figura = getCirculoY(c);
+        raio = getCirculoRaio(c);
+        dx = x-x1Figura;
+        dy = y-y1Figura;
+        
+        distancia = sqrt((dx*dx) + (dy*dy));
+
+        if(distancia >= raio) {
+            escreverPontoNaoInterno(x,y,linhaArquivo,saidaTxt,saidaSvg);
+        } else if(distancia < raio) {
+            escreverPontoInterno(x,y,linhaArquivo,saidaTxt,saidaSvg);
+        }
+
+        escreverRetaDistancia(x1Figura,y1Figura,x,y,"black",saidaSvg);
+    } else {
+        r = getObjetoHash(*hashRet,id);
+        x1Figura = getRetanguloX(r);
+        y1Figura = getRetanguloY(r) + getRetanguloAltura(r);
+        x2Figura = getRetanguloX(r) + getRetanguloLargura(r);
+        y2Figura = getRetanguloY(r);
+
+        if(x > x1Figura) {
+            if(x < x2Figura) {
+                if(y > y1Figura) {
+                    if(y < y2Figura) {
+                        escreverPontoInterno(x,y,linhaArquivo,saidaTxt,saidaSvg);
+                        x1Figura = getRetanguloX(r) + (getRetanguloLargura(r)/2);
+                        y1Figura = getRetanguloY(r) + (getRetanguloAltura(r)/2);
+                        escreverRetaDistancia(x1Figura,y1Figura,x,y,"black",saidaSvg);
+                        return;
+                    }
+                }
+            }
+        }
+
+        x1Figura = getRetanguloX(r) + (getRetanguloLargura(r)/2);
+        y1Figura = getRetanguloY(r) + (getRetanguloAltura(r)/2);
+
+        escreverPontoNaoInterno(x,y,linhaArquivo,saidaTxt,saidaSvg);
+        escreverRetaDistancia(x1Figura,y1Figura,x,y,"black",saidaSvg);
+    }
+
+}
+
+// Comando "d?"
+void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
+    char id1[20],id2[20];
+    double dx1,dx2,dy1,dy2;
+    double distancia;
+
+    Circulo c1;
+    Circulo c2;
+    Retangulo r1;
+    Retangulo r2;
+
+    sscanf(linhaArquivo,"d? %s %s",id1,id2);
+
+
+    if((c1 = getObjetoHash(*hashCirc,id1)) != NULL) {
+
+        dx1 = getCirculoX(c1);
+        dy1 = getCirculoY(c1);
+        
+        if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
+
+            dx2 = getCirculoX(c2);
+            dy2 = getCirculoY(c2);
+        } else {
+
+            r2 = getObjetoHash(*hashRet,id2);
+            dx2 = getRetanguloX(r2) + (getRetanguloLargura(r2)/2);
+            dy2 = getRetanguloY(r2) + (getRetanguloAltura(r2)/2);
+        }
+    } else {
+
+        r1 = getObjetoHash(*hashRet,id1);
+        
+        dx2 = getRetanguloX(r1) + (getRetanguloLargura(r1)/2);
+        
+        dy2 = getRetanguloY(r1) + (getRetanguloAltura(r1)/2);
+
+
+        if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
+
+            dx1 = getCirculoX(c2);
+
+            dy1 = getCirculoY(c2);
+        } else {
+            
+            r2 = getObjetoHash(*hashRet,id2);
+            dx1 = getRetanguloX(r2) + (getRetanguloLargura(r2)/2);
+            
+            dy1 = getRetanguloY(r2) + (getRetanguloAltura(r2)/2);
+        }
+    }
+
+    distancia = (dx2 - dx1)*(dx2 - dx1) + (dy1 - dy2)*(dy1 - dy2);
+    distancia = sqrt(distancia);
+
+    escreverRetaDistancia(dx1,dy1,dx2,dy2,"red",saidaSvg);
+    escreverDistanciaSvg((dx1+dx2)/2,(dy1+dy2)/2,distancia,saidaSvg);
+    escreverDistanciaTxt(linhaArquivo,distancia,saidaTxt);
+}
+
+// Comando "bb"
+// Com erro
+/*
+void comandoBB(char *linhaArquivo,char *nomeSaidaSvg,struct tree **circulo,struct tree **retangulo,struct tree **texto) {
+    char *nomeArquivo = NULL;
+    char *temp = NULL;
+    char sufixo[150];
+    char cor[50];
+
+    FILE *saidaBB = NULL;
+
+    sscanf(linhaArquivo,"bb %s %s",sufixo,cor);
+
+    nomeArquivo = tiraExtensao(nomeSaidaSvg);
+    temp = (char*)calloc(strlen(nomeArquivo)+strlen(sufixo)+6,sizeof(char));
+    strcpy(temp,nomeArquivo);
+    strcat(temp,"-");
+    strcat(temp,sufixo);
+    strcat(temp,".svg");
+
+    saidaBB = fopen(temp,"w");
+    
+    fclose(saidaBB);
+    free(nomeArquivo);
+    free(temp);
+}*/
+
+// COMANDOS T2
+
 // Função para exemplo de consulta nas trees e hash
 void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
     char metrica[3], id[50];
@@ -90,6 +295,98 @@ void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidr
         }
     }
 }
+
+// Com erro
+/*
+void comandoDel(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
+    char id[50];
+    // Declaração variaveis para cada figura
+    Hidrante h;
+    Semaforo s;
+    Radio r;
+    Quadra q;
+
+    sscanf(linhaArquivo,"del %s",id);
+
+    // Verifica a qual figura pertence o id dado
+    if ((h = getObjetoHash(*hashHid, id)) != NULL) {
+        deleteNodeTree(*hidrante,h);
+    } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
+        deleteNodeTree(*semaforo,s);
+    } else if ((r = getObjetoHash(*hashRad, id)) != NULL) {
+        deleteNodeTree(*radio,r);
+    } else if((q = getObjetoHash(*hashQuad, id)) != NULL) {
+        deleteNodeTree(*quadra,r);
+    }
+}*/
+
+void comandoCbq(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **quadra,tabelaHash **hashQuad) {
+
+}
+
+int verificaQuadraDentroCirculo(double x,double y,double raio,Quadra q) {
+    double xQuadra=0,yQuadra=0,hQuadra=0,wQuadra=0,distancia=0;
+    double topLeftX,topRightX,bottomLeftX,bottomRightX,topLeftY,topRightY,bottomLeftY,bottomRightY;
+    struct Quadra *tempQuadra = (struct Quadra*) q;
+
+    xQuadra = getQuadraX(tempQuadra);
+    yQuadra = getQuadraY(tempQuadra);
+    hQuadra = getQuadraAltura(tempQuadra);
+    wQuadra = getQuadraLargura(tempQuadra);
+
+    topLeftX = x - xQuadra;
+    topRightX = x - (xQuadra + wQuadra);
+    bottomLeftX = x - xQuadra;
+    bottomRightX = x - (xQuadra + wQuadra);
+
+    topLeftY = y - yQuadra;
+    topRightY = y - yQuadra;
+    bottomLeftY = y - (yQuadra + hQuadra);
+    bottomRightY = y - (yQuadra + hQuadra);
+
+    distancia = sqrt((topLeftX*topLeftX) + (topLeftY*topLeftY));
+    if(distancia < raio) {
+        distancia = sqrt((topRightX*topRightX) + (topRightY*topRightY));
+        if(distancia < raio) {
+            distancia = sqrt((bottomLeftX*bottomLeftX) + (bottomLeftY*bottomLeftY));
+            if(distancia < raio) {
+                distancia = sqrt((bottomRightX*bottomRightX) + (bottomRightY*bottomRightY));
+                if(distancia < raio) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+void comandoCrd(char *linhaArquivo,char *saidaTxt,struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
+    char id[50];
+    FILE *arquivoSaidaTxt = fopen(saidaTxt,"a+");
+    // Declaração variaveis para cada figura
+    Hidrante h;
+    Semaforo s;
+    Radio r;
+    Quadra q;
+
+    sscanf(linhaArquivo,"crd? %s",id);
+
+    // Verifica a qual figura pertence o id dado
+    if ((h = getObjetoHash(*hashHid, id)) != NULL) {
+        fprintf(arquivoSaidaTxt,"%sHIDRANTE | X = %lf | Y = %lf\n",linhaArquivo,getHidranteX(h),getHidranteY(h));
+    } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
+        fprintf(arquivoSaidaTxt,"%sSEMAFORO | X = %lf | Y = %lf\n",linhaArquivo,getSemaforoX(s),getSemaforoY(s));
+    } else if ((r = getObjetoHash(*hashRad, id)) != NULL) {
+        fprintf(arquivoSaidaTxt,"%sRADIO | X = %lf | Y = %lf\n",linhaArquivo,getRadioX(r),getRadioY(r));
+    } else if((q = getObjetoHash(*hashQuad, id)) != NULL) {
+        fprintf(arquivoSaidaTxt,"%sQUADRA | X = %lf | Y = %lf\n",linhaArquivo,getQuadraX(q),getQuadraY(q));
+    } else {
+        fprintf(arquivoSaidaTxt,"%sFigura não encontrada\n",linhaArquivo);
+    }
+
+}
+
+// COMANDOS T4
 
 void comandoDmprbt(char* comandos, char* localSaida, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, struct tree**predio, struct tree**muro) {
     char nomeArq[50], t, *temp1 = NULL;

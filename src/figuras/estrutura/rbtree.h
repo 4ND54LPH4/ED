@@ -45,6 +45,9 @@ void printTree(struct tree *tree, char *nomeArq, char* (*printFunc)(void*, char*
 // Printar a tree no svg
 void treeToSvg(struct tree *tree, char *nomeArq);
 
+// Printa a tree no svg pelo comando "BB"
+//void treeToSvgBB(struct tree *tree, char *nomeArq,char *cor,int op);
+
 // Procura o primeiro node correspondente a key. Retorna NULL se nao encontrar
 struct node *findTree(struct tree *tree, void *objeto);
 

@@ -53,6 +53,8 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
         exit(0);
     }
 
+    iniciarSvg(temp2);
+
     // Lê e executa comandos
     while(fgets(linhaArquivo,500,arquivoEntrada)!=NULL) {
         if(linhaArquivo[0]=='o' && linhaArquivo[1]=='?') {
@@ -61,12 +63,12 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='i' && linhaArquivo[1]=='?') {
             // Ponto (x,y) é interno a forma j?
-            printf("i\n");
+            comandoInterno(linhaArquivo,temp2,temp3,circulo,retangulo,(tabelaHash)hashCirc,(tabelaHash)hashRet);
 
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='?') {
             // Distancia entre centros de massa das formas j e k?
-            printf("d\n");
+            comandoDistancia(linhaArquivo,temp2,temp3,circulo,retangulo,(tabelaHash)hashCirc,(tabelaHash)hashRet);
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='b') {
             // Cria novo arquivo svg contendo os circulos e retangulos referentes aos comandos c e r processados ate o momento.
@@ -74,11 +76,10 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='q') {
             comandoDq(linhaArquivo, temp2, temp3, hidrante, semaforo, radio, quadra, (tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
-            printf("dq\n");
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='e' && linhaArquivo[2]=='l') {
             // Remove a forma identificada por id (ou cep)
-            printf("del\n");
+            // comandoDel(linhaArquivo,temp2,temp3,hidrante,semaforo,radio,quadra,(tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
 
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='b' && linhaArquivo[2]=='q') {
             // Muda a cor da borda de todas as quadras que estiverem inteiramente contidas dentro do circulo de centro em (x,y) e de raio r.
@@ -86,7 +87,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='r' && linhaArquivo[2]=='d') {
             // Imprime as coordenadas e a especie do equipamento urbano
-            printf("crd\n");
+            comandoCrd(linhaArquivo,temp3,hidrante,semaforo,radio,quadra,(tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
 
         } else if(linhaArquivo[0]=='t' && linhaArquivo[1]=='r' && linhaArquivo[2]=='n') {
             // Desloca todas as quadras e equipamentos urbanos que estiverem inteiramente dentro do retangulo (x,y,w,h) em dx e dy unidades.
@@ -146,7 +147,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         }
     }
-    iniciarSvg(temp2);
+
     treeToSvg(*circulo, temp2);
     treeToSvg(*retangulo, temp2);
     treeToSvg(*texto, temp2);

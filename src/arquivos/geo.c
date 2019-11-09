@@ -93,6 +93,7 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 desenharCirculo(temp2,tempCirculo);
                 totalFeitos++;
                 insertTree(*circulo, tempCirculo);
+                inserirHash(*hashCirc, tempCirculo);
             }
         } else if(linhaArquivo[0]=='r' && linhaArquivo[1]==' ') {
             // Adiciona Retangulo
@@ -101,6 +102,7 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
                 desenharRetangulo(temp2,tempRetangulo);
                 totalFeitos++;
                 insertTree(*retangulo, tempRetangulo);
+                inserirHash(*hashRet, tempRetangulo);
             }
         } else if(linhaArquivo[0]=='t' && linhaArquivo[1]==' ') {
             // Adiciona Texto

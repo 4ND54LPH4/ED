@@ -22,5 +22,6 @@ void escreverRetaDistancia(double xInicio, double yInicio,double xFinal,double y
 void escreverDistanciaSvg(double x,double y,double distancia,char *sSvg);
 void escreverDistanciaTxt(char linhaArquivo[500],double distancia,char *sTxt);
 void escreverTextoTxt(char *nomeArq, char* texto);
+void desenhaSvgBB(char *nomeSaida,char *cor);
 
 #endif

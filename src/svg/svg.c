@@ -135,8 +135,8 @@ void desenharMuro(char *fileName,Muro recebeMuro) {
 
 
 void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg) {
-    FILE *saidaTxt = NULL;
-    FILE *saidaSvg = NULL;
+    FILE *saidaTxt = fopen(sTxt,"a+");
+    FILE *saidaSvg = fopen(sSvg,"a+");
 
     fprintf(saidaTxt,"%sINTERNO\n",linhaArquivo);
     fprintf(saidaSvg,"\t<circle r='5' cx='%lf' cy='%lf' stroke='green' fill='forestgreen' stroke-width='2'/>\n",x,y);
@@ -146,8 +146,8 @@ void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,ch
 }
 
 void escreverPontoNaoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg) {
-    FILE *saidaTxt = NULL;
-    FILE *saidaSvg = NULL;
+    FILE *saidaTxt = fopen(sTxt,"a+");
+    FILE *saidaSvg = fopen(sSvg,"a+");
 
     fprintf(saidaTxt,"%sNAO INTERNO\n",linhaArquivo);
     fprintf(saidaSvg,"\t<circle r='5' cx='%lf' cy='%lf' stroke='darkred' fill='red' stroke-width='2'/>\n",x,y);
@@ -157,7 +157,7 @@ void escreverPontoNaoInterno(double x,double y,char linhaArquivo[500],char *sTxt
 }
 
 void escreverRetaDistancia(double xInicio, double yInicio,double xFinal,double yFinal,char *cor,char *sSvg) {
-    FILE *saidaSvg = NULL;
+    FILE *saidaSvg = fopen(sSvg,"a+");
 
     fprintf(saidaSvg,"\t<line x1='%lf' y1='%lf' x2='%lf' y2='%lf' stroke-width='3' stroke='%s' />\n",xInicio,yInicio,xFinal,yFinal,cor);
 
@@ -165,7 +165,7 @@ void escreverRetaDistancia(double xInicio, double yInicio,double xFinal,double y
 }
 
 void escreverDistanciaSvg(double x,double y,double distancia,char *sSvg) {
-    FILE *saidaSvg = NULL;
+    FILE *saidaSvg = fopen(sSvg,"a+");
 
     fprintf(saidaSvg,"\t<text x='%lf' y='%lf' text-anchor='middle' font-size='10px'>%lf</text>\n",x,y,distancia);
 
@@ -173,7 +173,7 @@ void escreverDistanciaSvg(double x,double y,double distancia,char *sSvg) {
 }
 
 void escreverDistanciaTxt(char linhaArquivo[500],double distancia,char *sTxt) {
-    FILE *saidaTxt = NULL;
+    FILE *saidaTxt = fopen(sTxt,"a+");
 
     fprintf(saidaTxt,"%s%lf\n",linhaArquivo,distancia);
 
@@ -181,7 +181,17 @@ void escreverDistanciaTxt(char linhaArquivo[500],double distancia,char *sTxt) {
 }
 
 void escreverTextoTxt(char *nomeArq, char* texto) {
-    FILE *saidaTxt = fopen(nomeArq, "a");
+    FILE *saidaTxt = fopen(nomeArq, "a+");
     fprintf(saidaTxt, "%s", texto);
     fclose(saidaTxt);
+}
+
+void desenhaSvgBB(char *nomeSaida,char *cor) {
+    FILE *arquivoSaida = NULL;
+
+    arquivoSaida = fopen(nomeSaida,"w");
+
+    
+
+    fclose(arquivoSaida);
 }
