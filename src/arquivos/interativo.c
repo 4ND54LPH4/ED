@@ -14,8 +14,8 @@ void processarInterativo(char *pGeo,char *pQry,char *localEntrada,char *localSai
     struct tree **tipoEstabelecimento, struct tree **estabelecimento,struct tree **pessoa,struct tree**morador,
     tabelaHash **hashCirc,tabelaHash **hashRet,tabelaHash **hashHid,
     tabelaHash **hashQuad,tabelaHash **hashSem,tabelaHash **hashRad,
-    tabelaHash **hashPrd,tabelaHash **hashTipEst,tabelaHash **hashEst,
-    tabelaHash **hashPes,tabelaHash **hashMor) {
+    tabelaHash **hashPrd,tabelaHash **hashMur,tabelaHash **hashTipEst,
+    tabelaHash **hashEst,tabelaHash **hashPes,tabelaHash **hashMor) {
 
     char linhaComando[100], instrucao[10], comandoNav[100], instrucaoNav[10];
     while (1) {
@@ -29,7 +29,7 @@ void processarInterativo(char *pGeo,char *pQry,char *localEntrada,char *localSai
         } else if (!strcmp(instrucao, "q")) {
             char novoQry[50];
             sscanf(linhaComando, "q %s", novoQry);
-            processarComandosQry(pGeo, novoQry, localEntrada, localSaida, qtdFiguras,circulo,retangulo,texto,hidrante,quadra,semaforo,radio,muro,predio,tipoEstabelecimento,estabelecimento,pessoa,morador,(tabelaHash)hashCirc,(tabelaHash)hashRet,(tabelaHash)hashHid,(tabelaHash)hashQuad,(tabelaHash)hashSem,(tabelaHash)hashRad,(tabelaHash)hashPrd,(tabelaHash)hashTipEst,(tabelaHash)hashEst,(tabelaHash)hashPes,(tabelaHash)hashMor);
+            processarComandosQry(pGeo, novoQry, localEntrada, localSaida, qtdFiguras,circulo,retangulo,texto,hidrante,quadra,semaforo,radio,muro,predio,tipoEstabelecimento,estabelecimento,pessoa,morador,(tabelaHash)hashCirc,(tabelaHash)hashRet,(tabelaHash)hashHid,(tabelaHash)hashQuad,(tabelaHash)hashSem,(tabelaHash)hashRad,(tabelaHash)hashPrd,(tabelaHash)hashMur,(tabelaHash)hashTipEst,(tabelaHash)hashEst,(tabelaHash)hashPes,(tabelaHash)hashMor);
         } else if (!strcmp(instrucao, "dmprbt")) {
             char t, *nomeArq;
             sscanf(linhaComando, "dmprbt %c %s", &t, nomeArq);

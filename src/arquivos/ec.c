@@ -36,15 +36,9 @@ void processarComandosEc(char *estabComercial,char *localEntrada,char *localSaid
     // Abre o arquivo svg de saída
     temp2 = getSvgSaida(localSaida,estabComercial);
     printf("TEMP2: %s\n\n",temp2);
-    arquivoSaida = fopen(temp2,"w");
 
     if(arquivoEntrada == NULL) {
         printf("Erro ao abrir o arquivo geo\n");
-        exit(0);
-    }
-
-    if(arquivoSaida == NULL) {
-        printf("Erro ao criar arquivo\n");
         exit(0);
     }
 
@@ -71,7 +65,6 @@ void processarComandosEc(char *estabComercial,char *localEntrada,char *localSaid
 
     // Fecha arquivos
     fclose(arquivoEntrada);
-    fclose(arquivoSaida);
     free(temp1);
     free(temp2);
 }

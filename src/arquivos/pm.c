@@ -35,15 +35,9 @@ void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qt
 
     // Abre o arquivo svg de saída
     temp2 = getSvgSaida(localSaida,pessoas);
-    arquivoSaida = fopen(temp2,"w");
 
     if(arquivoEntrada == NULL) {
         printf("Erro ao abrir o arquivo geo\n");
-        exit(0);
-    }
-
-    if(arquivoSaida == NULL) {
-        printf("Erro ao criar arquivo\n");
         exit(0);
     }
 
@@ -69,7 +63,6 @@ void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qt
 
     // Fecha arquivos
     fclose(arquivoEntrada);
-    fclose(arquivoSaida);
     free(temp1);
     free(temp2);
 }

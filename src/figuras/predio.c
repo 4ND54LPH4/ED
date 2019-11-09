@@ -7,17 +7,17 @@
 typedef struct predio {
     char id[MAX], face;
     int num;
-    double f, p, mrg;
+    float f, p, mrg;
     tabelaHash* hashQuadra;
 } *pPredio;
 
 Predio addPredio(char comandos[500], tabelaHash hashQuadra) {
     char id[MAX], face;
     int num = 0;
-    double f = 0, p = 0, mrg = 0;
+    float f = 0, p = 0, mrg = 0;
     struct predio *temp = (struct predio*)malloc(sizeof(struct predio));
 
-    sscanf(comandos, "prd %s %c %d %lf %lf %lf", id, &face, &num, &f, &p, &mrg);
+    sscanf(comandos, "prd %s %c %d %f %f %f", id, &face, &num, &f, &p, &mrg);
 
     strcpy(temp->id, id);
     temp->face = face;
@@ -45,22 +45,22 @@ int getPredioNum(Predio recebePredio) {
     return temp->num;
 }
 
-double getPredioF(Predio recebePredio) {
+float getPredioF(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     return temp->f;
 }
 
-double getPredioP(Predio recebePredio) {
+float getPredioP(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     return temp->p;
 }
 
-double getPredioMrg(Predio recebePredio) {
+float getPredioMrg(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     return temp->mrg;
 }
 
-double getPredioX(Predio recebePredio) {
+float getPredioX(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     Quadra quadra = getObjetoHash(temp->hashQuadra, temp->id);
 
@@ -75,7 +75,7 @@ double getPredioX(Predio recebePredio) {
     }
 }
 
-double getPredioY(Predio recebePredio) {
+float getPredioY(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     Quadra quadra = getObjetoHash(temp->hashQuadra, temp->id);
 
@@ -90,7 +90,7 @@ double getPredioY(Predio recebePredio) {
     }
 }
 
-double getPredioTexX(Predio recebePredio) {
+float getPredioTexX(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     Quadra quadra = getObjetoHash(temp->hashQuadra, temp->id);
 
@@ -103,7 +103,7 @@ double getPredioTexX(Predio recebePredio) {
     }
 }
 
-double getPredioTexY(Predio recebePredio) {
+float getPredioTexY(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
     Quadra quadra = getObjetoHash(temp->hashQuadra, temp->id);
 
@@ -116,7 +116,7 @@ double getPredioTexY(Predio recebePredio) {
     }
 }
 
-double getPredioAltura(Predio recebePredio) {
+float getPredioAltura(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
 
     if (temp->face == 'N' || temp->face == 'S') {
@@ -126,7 +126,7 @@ double getPredioAltura(Predio recebePredio) {
     }
 }
 
-double getPredioLargura(Predio recebePredio) {
+float getPredioLargura(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
 
     if (temp->face == 'N' || temp->face == 'S') {

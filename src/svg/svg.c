@@ -132,7 +132,23 @@ void desenharMuro(char *fileName,Muro recebeMuro) {
     fclose(saidaSvg);
 }
 
+void desenharBomba(char *fileName, float x, float y) {
+    FILE *saidaSvg = NULL;
+    saidaSvg = fopen(fileName,"a");
 
+    fprintf(saidaSvg, "<circle r='7' cx='%f' cy='%f' stroke='black' fill='grey' stroke-width='1'/>\n", x, y);
+
+    fclose(saidaSvg);
+}
+
+void desenharLinha(char *fileName, float x1, float x2, float y1, float y2) {
+    FILE *saidaSvg = NULL;
+    saidaSvg = fopen(fileName,"a");
+
+    fprintf(saidaSvg, "<line x1='%f' y1='%f' x2='%f' y2='%f' style='stroke:rgb(0,0,0);stroke-width:2;'/>\n", x1, y1, x2, y2);
+
+    fclose(saidaSvg);
+}
 
 void escreverPontoInterno(double x,double y,char linhaArquivo[500],char *sTxt,char *sSvg) {
     FILE *saidaTxt = fopen(sTxt,"a+");

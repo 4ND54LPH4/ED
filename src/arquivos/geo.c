@@ -13,7 +13,7 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
     struct tree **retangulo,struct tree **texto,struct tree **hidrante,struct tree **quadra,
     struct tree **semaforo,struct tree **radio,struct tree **muro,struct tree **predio,
     tabelaHash **hashCirc,tabelaHash **hashRet, tabelaHash **hashHid,tabelaHash **hashQuad,
-    tabelaHash **hashSem,tabelaHash **hashRad,tabelaHash **hashPrd) {
+    tabelaHash **hashSem,tabelaHash **hashRad,tabelaHash **hashPrd,tabelaHash **hashMur) {
 
     // Variável para leitura da linha do arquivo
     char linhaArquivo[500];
@@ -55,6 +55,7 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
     *hashSem = criarTabelaHash(1000, comparaKeySemaforo, getSemaforoId);
     *hashRad = criarTabelaHash(1000, comparaKeyRadio, getRadioId);
     *hashPrd = criarTabelaHash(1000, comparaKeyPredio, getPredioId);
+    *hashMur = criarTabelaHash(1000, comparaKeyMuro, getMuroId);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;
@@ -172,10 +173,13 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='u') {
             // Adiciona Muro
             if(totalFeitosMuro < getNmNx(qtdFiguras)) {
-                Muro tempMuro = addMuro(linhaArquivo,totalFeitosMuro);
+                char converte[10];
+                sprintf(converte, "%d", totalFeitosMuro);
+                Muro tempMuro = addMuro(linhaArquivo,converte);
                 desenharMuro(temp2,tempMuro);
                 totalFeitosMuro++;
                 insertTree(*muro, tempMuro);
+                inserirHash(*hashMur, tempMuro);
             }
         }
     }

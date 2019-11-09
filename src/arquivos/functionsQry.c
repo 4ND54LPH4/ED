@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include "../figuras/brl/segmento.h"
+#include "../figuras/brl/vertice.h"
+#include "../figuras/brl/ponto.h"
+#include "../figuras/brl/lista.h"
 #include <stdlib.h>
 #include <string.h>
 #include "functionsQry.h"
@@ -8,7 +12,10 @@
 #include "../figuras/estrutura/rbtree.h"
 #include "../figuras/estrutura/hash.h"
 #include <math.h>
+#define PI 3.1415
 
+float xFoco, yFoco;
+Segmento contOeste,contLeste,contSul,contNorte,contOesteB;
 
 // COMANDOS T1
 
@@ -500,4 +507,1013 @@ void comandoMud(char* comandos, char* nomeTxt, tabelaHash **hashMor) {
     setMoradorCompl(m, compl);
     escreverTextoTxt(nomeTxt, result);
     escreverTextoTxt(nomeTxt, "\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+double distancia(double x1, double y1, double x2, double y2) {
+    return sqrt(pow(x2-x1,2)+pow(y2-y1,2));
+}
+
+int lado(Ponto A, Ponto B, Ponto C) {
+    int S;
+    S = getXPonto(A)*getYPonto(C) - getYPonto(A)*getXPonto(C) + getYPonto(A)*getXPonto(B)
+        - getXPonto(A)*getYPonto(B) + getXPonto(C)*getYPonto(B) - getYPonto(C)*getXPonto(B);
+
+    if(S<0) return -1;
+    else if(S>0) return 1;
+    else return 0;
+}
+
+double min(double vet[], int size) {
+    double minimo = vet[0];
+    for(int i=1;i<size;i++){
+        if(vet[i]<minimo)
+            minimo=vet[i];
+    }
+    return minimo;
+}
+
+double max(double vet[], int size) {
+    double maximo = vet[0];
+    for(int i=1;i<size;i++){
+        if(vet[i]>maximo)
+            maximo=vet[i];
+    }
+    return maximo;
+}
+
+int seInterceptam(Ponto A, Ponto B, Ponto C, Ponto D) {
+    int abc,abd,cda,cdb;
+
+    abc = lado(A,B,C);
+    abd = lado(A,B,D);
+    cda = lado(C,D,A);
+    cdb = lado(C,D,B);
+
+    return ((abc*abd<=0) && (cda*cdb<=0));
+}
+
+Ponto intersectionLines(Ponto A1, Ponto A2, Ponto B1, Ponto B2) {
+    double m1, c1, m2, c2;
+    double dx1, dy1,dx2, dy2;
+    double intersection_X, intersection_Y;
+
+    double Ax1 = getXPonto(A1);
+    double Ay1 = getYPonto(A1);
+    double Ax2 = getXPonto(A2);
+    double Ay2 = getYPonto(A2);
+
+    double Bx1 = getXPonto(B1);
+    double By1 = getYPonto(B1);
+    double Bx2 = getXPonto(B2);
+    double By2 = getYPonto(B2);
+
+
+    dx1 = Ax2 - Ax1;
+
+    dy1 = Ay2 - Ay1;
+
+    if(dx1==0){
+        m1=0;
+        Ay1=0;
+    }
+    else m1 = dy1 / dx1;
+
+    c1 = Ay1 - m1 * Ax1;
+
+    dx2 = Bx2 - Bx1;
+    dy2 = By2 - By1;
+
+    if(dx2==0){
+        m2=0;
+        By1=0;
+    }
+    else m2 = dy2 / dx2;
+    c2 = By1 - m2 * Bx1;
+
+    if( (m1 - m2) == 0 && m1!=0 && m2!=0){
+        printf("No Intersection between the lines\n");
+        return NULL;
+    }else{
+        if(dx1==0){
+            intersection_X=Ax1;
+            intersection_Y = m2 * intersection_X+c2;
+        }
+        else if(dx2==0){
+            intersection_X=Bx1;
+            intersection_Y = m1 * intersection_X+c1;
+        }else{
+            intersection_X = (c2 - c1) / (m1 - m2);
+            intersection_Y = m1 * intersection_X + c1;
+        }
+
+        double Xs[4] = {Ax1,Ax2,Bx1,Bx2};
+        double Ys[4] = {Ay1,Ay2,By1,By2};
+
+        double minX=min(Xs,4);
+        double maxX=max(Xs,4);
+        double minY=min(Ys,4);
+        double maxY=max(Ys,4);
+
+       if((intersection_X > minX-100 || AreSame(intersection_X , minX)) && (intersection_X < maxX+100 || AreSame(intersection_X,maxX)) && (intersection_Y > minY-100 || AreSame(intersection_Y,minY)) && (intersection_Y < maxY+100 || AreSame(intersection_Y,maxY))){
+            return criaPonto(intersection_X,intersection_Y);
+        }else
+        {
+            return NULL;
+        }
+
+    }
+}
+
+int AreSame(double a, double b) {
+    return fabs(a - b) < __DBL_EPSILON__;
+}
+
+int isEqual(Ponto A, Ponto B) {
+    if(AreSame(getXPonto(A),getXPonto(B)) && AreSame(getYPonto(A),getYPonto(B)))
+        return 1;
+    else return 0;
+}
+
+Ponto pontoIntersecao(Ponto A, Ponto B, Ponto C, Ponto D) {
+    double s, t,denom;
+    if(!seInterceptam(A,B,C,D))
+        return NULL;
+
+    denom = ((getYPonto(B) - getYPonto(A)) * (getXPonto(D) - getXPonto(C)) - (getYPonto(D) - getYPonto(C)) * (getXPonto(B) - getXPonto(A)));
+    if(denom == 0)
+        return NULL;
+
+
+    s = (getXPonto(A) * (getYPonto(D)-getYPonto(C)) + getXPonto(C)*(getYPonto(A)-getYPonto(D)) + getXPonto(D)*(getYPonto(C)-getYPonto(A)))/denom;
+
+    t = - (getXPonto(A) * (getYPonto(C)-getYPonto(B)) + getXPonto(B)*(getYPonto(A)-getYPonto(C)) + getXPonto(C)*(getYPonto(B)-getYPonto(A)))/denom;
+
+    if(s>=0 && s<=1 && t>=0 && t<=1){
+        return criaPonto(getXPonto(A)+s*(getXPonto(B)-getXPonto(A)),getYPonto(A)+s*(getYPonto(B)-getYPonto(A)));
+    } else return NULL;
+}
+
+int seInterceptamProprio(Ponto A, Ponto B, Ponto C, Ponto D) {
+    int abc,abd,cda,cdb;
+
+    abc = lado(A,B,C);
+    abd = lado(A,B,D);
+    cda = lado(C,D,A);
+    cdb = lado(C,D,B);
+
+    return ((abc*abd<0) && (cda*cdb<0));
+}
+
+Ponto pontoIntersecaoProprio(Ponto A, Ponto B, Ponto C, Ponto D) {
+    double s, t,denom;
+    if(!seInterceptamProprio(A,B,C,D))
+        return NULL;
+
+    denom = ((getYPonto(B) - getYPonto(A)) * (getXPonto(D) - getXPonto(C)) - (getYPonto(D) - getYPonto(C)) * (getXPonto(B) - getXPonto(A)));
+    if(denom == 0)
+        return NULL;
+
+
+    s = (getXPonto(A) * (getYPonto(D)-getYPonto(C)) + getXPonto(C)*(getYPonto(A)-getYPonto(D)) + getXPonto(D)*(getYPonto(C)-getYPonto(A)))/denom;
+
+    t = - (getXPonto(A) * (getYPonto(C)-getYPonto(B)) + getXPonto(B)*(getYPonto(A)-getYPonto(C)) + getXPonto(C)*(getYPonto(B)-getYPonto(A)))/denom;
+
+    if(s>0 && s<1 && t>0 && t<1){
+        return criaPonto(getXPonto(A)+s*(getXPonto(B)-getXPonto(A)),getYPonto(A)+s*(getYPonto(B)-getYPonto(A)));
+    } else return NULL;
+}
+
+Segmento SegMaisProx(Vertice v, Vertice vet[], int indice) {
+    int j=0;
+    int id=-1;
+    double minDist;
+    Ponto foco = criaPonto(xFoco,yFoco);
+    Ponto vertice = getPonto(v);
+    for(int i=0;i<indice;i++){
+        Segmento s = getSegmento(vet[i]);
+        if(isSegmentoAtivo(s)==1){
+            Ponto p1 = getPonto(getV1Segmento(s));
+            Ponto p2 = getPonto(getV2Segmento(s));
+            Ponto inter = intersectionLines(foco,vertice,p1,p2);
+            if(inter!=NULL){
+                if(j==0){
+                    minDist=distancia(getXPonto(foco),getYPonto(foco),getXPonto(inter),getYPonto(inter));
+                    id=i;
+                    j++;
+                }else{
+                    if(distancia(getXPonto(foco),getYPonto(foco),getXPonto(inter),getYPonto(inter))<minDist ||
+                        AreSame(distancia(getXPonto(foco),getYPonto(foco),getXPonto(inter),getYPonto(inter)),minDist)){
+                            minDist=distancia(getXPonto(foco),getYPonto(foco),getXPonto(inter),getYPonto(inter));
+                            id=i;
+                    }
+                }
+                free(inter);
+            }
+        }
+    }
+    free(foco);
+    if(id!=-1){
+        return getSegmento(vet[id]);
+    }else return NULL;
+}
+
+void organizaSegmentos(Lista Segmentos) {
+    int posSeg = getFirst(Segmentos);
+    while(posSeg!=-1){
+        Segmento s = get(Segmentos,posSeg);
+        Vertice v1 = getV1Segmento(s);
+        Vertice v2 = getV2Segmento(s);
+        Ponto p1 = getPonto(v1);
+        Ponto p2 = getPonto(v2);
+        Ponto c = criaPonto(xFoco,yFoco);
+
+        if(lado(p1,p2,c)==1){
+            setInicioFim(v2,0);
+            setInicioFim(v1,1);
+            swapVertices(s);
+        }else{
+            setInicioFim(v1,0);
+            setInicioFim(v2,1);
+        }
+        posSeg = getNext(Segmentos,posSeg);
+        free(c);
+    }
+}
+
+int comparaVertices(const void *a, const void *b) {
+    if(getAnguloVertice((*(Vertice*) a))>getAnguloVertice((*(Vertice*) b))) return 1;
+    if(getAnguloVertice((*(Vertice*) a))<getAnguloVertice((*(Vertice*) b))) return -1;
+    if(AreSame(getAnguloVertice((*(Vertice*) a)),getAnguloVertice((*(Vertice*) b)))){
+        if(distancia(xFoco,yFoco,getXVertice((*(Vertice*) a)),getYVertice((*(Vertice*) a)))
+            >distancia(xFoco,yFoco,getXVertice((*(Vertice*) b)),getYVertice((*(Vertice*) b)))){
+                return 1;
+        }else  if(distancia(xFoco,yFoco,getXVertice((*(Vertice*) a)),getYVertice((*(Vertice*) a)))
+            <distancia(xFoco,yFoco,getXVertice((*(Vertice*) b)),getYVertice((*(Vertice*) b)))){
+                return -1;
+        }else if(AreSame(distancia(xFoco,yFoco,getXVertice((*(Vertice*) a)),getYVertice((*(Vertice*) a)))
+            ,distancia(xFoco,yFoco,getXVertice((*(Vertice*) b)),getYVertice((*(Vertice*) b))))){
+            if(isInicioOuFim((*(Vertice*) a))==0 && isInicioOuFim((*(Vertice*) b))==1)
+                return -1;
+            else if(isInicioOuFim((*(Vertice*) a))==1 && isInicioOuFim((*(Vertice*) b))==0)
+                return 1;
+            else return 0;
+        }
+    }
+
+}
+
+int isEncoberto(Vertice v,Lista segmentos) {
+    Ponto foco=criaPonto(xFoco,yFoco);
+    int posSeg = getFirst(segmentos);
+    while (posSeg!=-1){
+        Segmento s = get(segmentos,posSeg);
+        Vertice v1=getV1Segmento(s);
+        Vertice v2=getV2Segmento(s);
+        Ponto sV1 = getPonto(v1);
+        Ponto sV2 = getPonto(v2);
+        if(pontoIntersecaoProprio(foco,getPonto(v),sV1,sV2)!=NULL) {
+            free(foco);
+            return 1;
+        }
+        else if(AreSame(getAnguloVertice(v),getAnguloVertice(v1))){
+            if(!AreSame(distancia(xFoco,yFoco,getXPonto(sV1),getYPonto(sV1)),distancia(xFoco,yFoco,getXVertice(v),getYVertice(v)))
+                && pontoIntersecao(foco,getPonto(v),sV1,sV2)!=NULL) {
+                    free(foco);
+                    return 1;
+                }
+        }else if(AreSame(getAnguloVertice(v),getAnguloVertice(v2))){
+            if(!AreSame(distancia(xFoco,yFoco,getXPonto(sV2),getYPonto(sV2)),distancia(xFoco,yFoco,getXVertice(v),getYVertice(v)))
+                && pontoIntersecao(foco,getPonto(v),sV1,sV2)!=NULL) {
+                    free(foco);
+                    return 1;
+                }
+        }
+        posSeg=getNext(segmentos,posSeg);
+    }
+    free(foco);
+    return 0;
+}
+
+int cortaHorizontal(Lista segmentos, Vertice vertices[], int indice, int tamanhoSeg, char *aux) {
+    Vertice oesteA = getV1Segmento(contOeste);
+    Vertice oesteB = getV2Segmento(contOeste);
+
+    Ponto pOesteA = getPonto(oesteA);
+    Ponto pOesteB = getPonto(oesteB);
+
+    Ponto subInter = criaPonto(getXPonto(pOesteA),yFoco);
+
+    Ponto foco = criaPonto(xFoco,yFoco);
+    Ponto inter=pontoIntersecao(foco,subInter,pOesteA,pOesteB);
+
+    Ponto intersecao;
+
+    if(inter!=NULL){
+        int posSeg = getFirst(segmentos);
+        while (posSeg!=-1 && tamanhoSeg>0){
+            Segmento s = get(segmentos,posSeg);
+            int posAtual = posSeg;
+            posSeg = getNext(segmentos,posSeg);
+            Vertice v1=getV1Segmento(s);
+            Vertice v2=getV2Segmento(s);
+            Ponto pV1 = getPonto(v1);
+            Ponto pV2 = getPonto(v2);
+
+            intersecao = pontoIntersecao(foco,inter,pV1,pV2);
+            if(intersecao!=NULL){
+                Vertice Vi = criaVertice(intersecao,1,360);
+                vertices[indice]=Vi;
+                indice++;
+                Segmento seg=criaSegmento(v1,Vi,0,0);
+                segmentos=insert(segmentos,seg);
+                setSegmento(v1,seg);
+                setSegmento(Vi,seg);
+
+                Vertice Vj = criaVertice(intersecao,0,0);
+                vertices[indice]=Vj;
+                indice++;
+                seg=criaSegmento(Vj,v2,0,0);
+                segmentos=insert(segmentos,seg);
+                setSegmento(Vj,seg);
+                setSegmento(v2,seg);
+
+                remover(segmentos,posAtual);
+            }
+            tamanhoSeg--;
+        }
+    }
+    free(intersecao);
+    free(foco);
+    free(inter);
+    free(subInter);
+    return indice;
+}
+
+float calcularAngulo(float x1, float y1, float x2, float y2) {
+    float angulo = atan2(y2-y1,x2-x1)*(180/PI);
+
+    if(angulo<0)
+        angulo+=360;
+    if(angulo>360)
+        angulo-=360;
+
+    return angulo;
+}
+
+int criaContorno(Vertice vertices[], Lista Segmentos, int indice, tabelaHash **hashQuad, tabelaHash **hashMur, char* svg) {
+    float xMin=xFoco,yMin=yFoco,xMax=xFoco,yMax=yFoco;
+    int i=0, tamQuadra = getTamHash(*hashQuad), tamMuro = getTamHash(*hashMur);
+    Quadra q;
+    Muro m;
+
+    for (int i = 0; i < tamQuadra; i++) {
+        listaHash n = getIndiceHash(*hashQuad, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                q = getObjetoHash2(aux);
+
+                if(getQuadraX(q)<xMin)
+                    xMin=getQuadraX(q);
+                if(getQuadraX(q)+getQuadraLargura(q)>xMax)
+                    xMax=getQuadraX(q)+getQuadraLargura(q);
+                if(getQuadraY(q)<yMin)
+                    yMin=getQuadraY(q);
+                if(getQuadraY(q)+getQuadraAltura(q)>yMax)
+                    yMax=getQuadraY(q)+getQuadraAltura(q);
+
+                aux = n;
+            }
+        }
+    }
+
+    for (int i = 0; i < tamMuro; i++) {
+        listaHash n = getIndiceHash(*hashMur, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                m = getObjetoHash2(aux);
+
+                if(getMuroX1(m)<getMuroX2(m)){
+                    if(xMin>getMuroX1(m))
+                        xMin=getMuroX1(m);
+                    if(xMax<getMuroX2(m))
+                        xMax=getMuroX2(m);
+                }else{
+                    if(xMin>getMuroX2(m))
+                        xMin=getMuroX2(m);
+                    if(xMax<getMuroX1(m))
+                        xMax=getMuroX1(m);
+                }
+                if(getMuroY1(m)<getMuroY2(m)){
+                    if(yMin>getMuroY1(m))
+                        yMin=getMuroY1(m);
+                    if(yMax<getMuroY2(m))
+                        yMax=getMuroY2(m);
+                }else{
+                    if(yMin>getMuroY2(m))
+                        yMin=getMuroY2(m);
+                    if(yMax<getMuroY1(m))
+                        yMax=getMuroY1(m);
+                }
+
+                aux = n;
+            }
+        }
+    }
+
+    Ponto p1 = criaPonto(xMin-30,yMin-30);
+    Vertice v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    Ponto p2 = criaPonto(xMin-30,yMax+30);
+    Vertice v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+
+    contLeste=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contLeste);
+    setSegmento(v1,contLeste);
+    setSegmento(v2,contLeste);
+
+    p1 = criaPonto(xMin-30,yMin-30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMin-30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMin-30));
+    vertices[indice]=v2;
+    indice++;
+
+    contSul=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contSul);
+    setSegmento(v1,contSul);
+    setSegmento(v2,contSul);
+
+
+    p1 = criaPonto(xMax+30,yMin-30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMax+30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+    contOeste=criaSegmento(v1,v2,1,1);
+    contOesteB=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contOeste);
+
+    setSegmento(v1,contOeste);
+    setSegmento(v2,contOeste);
+
+
+    p1 = criaPonto(xMin-30,yMax+30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMax+30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMax+30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+    contNorte=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contNorte);
+
+    setSegmento(v1,contNorte);
+    setSegmento(v2,contNorte);
+
+    desenharLinha(svg, xMin-30, xMin-30, yMin-30, yMax+30);
+    desenharLinha(svg, xMin-30, xMax+30, yMin-30, yMin-30);
+    desenharLinha(svg, xMax+30, xMax+30, yMin-30, yMax+30);
+    desenharLinha(svg, xMin-30, xMax+30, yMax+30, yMax+30);
+
+    return indice;
+}
+
+int criaVerticesAndSegmentos(tabelaHash **hashPrd, tabelaHash **hashMur, Vertice vertices[], Lista Segmentos) {
+    int i=0, id=0, tamPredio = getTamHash(*hashPrd), tamMuro = getTamHash(*hashMur);
+    Predio p;
+    Muro m;
+
+    Ponto foco = criaPonto(xFoco,yFoco);
+    for (int j = 0; j < tamPredio; j++) {
+        listaHash n = getIndiceHash(*hashPrd, j);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                p = getObjetoHash2(aux);
+                Ponto ponto = criaPonto(getPredioX(p),getPredioY(p));
+                Vertice v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getPredioX(p),getPredioY(p)));
+                vertices[i]=v1;
+                i++;
+
+                ponto= criaPonto(getPredioX(p), getPredioY(p)+getPredioAltura(p));
+                Vertice v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getPredioX(p),getPredioY(p)+getPredioAltura(p)));
+                vertices[i]=v2;
+                i++;
+
+                Segmento s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                ponto = criaPonto(getPredioX(p), getPredioY(p)+getPredioAltura(p));
+                v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getPredioX(p), getPredioY(p)+getPredioAltura(p)));
+                vertices[i]=v1;
+                i++;
+
+                ponto = criaPonto(getPredioX(p)+getPredioLargura(p),getPredioY(p)+getPredioAltura(p));
+                v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getPredioX(p)+getPredioLargura(p),getPredioY(p)+getPredioAltura(p)));
+                vertices[i]=v2;
+                i++;
+
+                s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                ponto = criaPonto(getPredioX(p)+getPredioLargura(p),getPredioY(p)+getPredioAltura(p));
+                v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getPredioX(p)+getPredioLargura(p),getPredioY(p)+getPredioAltura(p)));
+                vertices[i]=v1;
+                i++;
+
+                ponto= criaPonto(getPredioX(p)+getPredioLargura(p),getPredioY(p));
+                v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getPredioX(p)+getPredioLargura(p),getPredioY(p)));
+                vertices[i]=v2;
+                i++;
+
+                s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                ponto = criaPonto(getPredioX(p)+getPredioLargura(p),getPredioY(p));
+                v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getPredioX(p)+getPredioLargura(p),getPredioY(p)));
+                vertices[i]=v1;
+                i++;
+
+                ponto= criaPonto(getPredioX(p),getPredioY(p));
+                v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getPredioX(p),getPredioY(p)));
+                vertices[i]=v2;
+                i++;
+
+                s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                aux = n;
+            }
+        }
+    }
+
+    for (int j = 0; j < tamMuro; j++) {
+        listaHash n = getIndiceHash(*hashMur, j);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                m = getObjetoHash2(aux);
+
+                Ponto ponto = criaPonto(getMuroX1(m),getMuroY1(m));
+                Vertice v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getMuroX1(m),getMuroY1(m)));
+                vertices[i]=v1;
+                i++;
+
+                ponto = criaPonto(getMuroX2(m),getMuroY2(m));
+                Vertice v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getMuroX2(m),getMuroY2(m)));
+                vertices[i]=v2;
+                i++;
+
+                Segmento s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                aux = n;
+            }
+        }
+    }
+    free(foco);
+    return i;
+}
+
+void desenhaSegmentos(Lista Segmentos, char *svg) {
+    FILE *arqSvg;
+    arqSvg = fopen(svg, "a");
+    if (arqSvg == NULL) {
+        printf("\nErro na abertura Svg.");
+    }
+    fprintf(arqSvg,"\n\t<polygon points=\"");
+    int posSeg = getFirst(Segmentos);
+    int i=0;
+    while (posSeg!=-1){
+        Segmento s = get(Segmentos,posSeg);
+        Ponto p1=getPonto(getV1Segmento(s));
+        Ponto p2=getPonto(getV2Segmento(s));
+        fprintf(arqSvg,"%lf,%lf %lf,%lf ",getXPonto(p1),getYPonto(p1),getXPonto(p2),getYPonto(p2));
+        posSeg=getNext(Segmentos,posSeg);
+        if(i==5){
+            fprintf(arqSvg,"\n\t\t");
+            i=0;
+        }
+        i++;
+    }
+    fprintf(arqSvg,"\" style=\"fill:yellow;fill-opacity:0.5;stroke:purple;stroke-width:1\" />");
+    fclose(arqSvg);
+    desenharBomba(svg,xFoco,yFoco);
+}
+
+void comandoBrl(char *comandos, char *nomeSvg, tabelaHash **hashQuadra, tabelaHash **hashPredio, tabelaHash **hashMuro) {
+    sscanf(comandos, "brl %f %f", &xFoco, &yFoco);
+    int tamanhoVet = (getTamHash(*hashPredio)*8)+(getTamHash(*hashPredio)*2)+100;
+    int tamanhoSegmentos = tamanhoVet/2;
+    Ponto y;
+    Vertice vy;
+
+    Lista Segmentos = criaLista(tamanhoSegmentos);
+
+    Vertice *vet=malloc(sizeof(Vertice)*tamanhoVet);
+
+    int indice=criaVerticesAndSegmentos((tabelaHash)hashPredio, (tabelaHash)hashMuro, vet, Segmentos);
+
+    indice=criaContorno(vet, Segmentos, indice, (tabelaHash)hashQuadra, (tabelaHash)hashMuro, nomeSvg);
+
+    organizaSegmentos(Segmentos);
+
+    indice=cortaHorizontal(Segmentos,vet,indice,length(Segmentos),nomeSvg);
+
+    qsort(vet,indice,sizeof(Vertice),comparaVertices);
+
+    Lista segmentosResposta = criaLista(tamanhoSegmentos*4);
+    Lista segmentosAtivos = criaLista(tamanhoSegmentos);
+
+    Ponto foco = criaPonto(xFoco,yFoco);
+
+    Vertice biombo = vet[0];
+
+    for(int i=0;i<indice;i++){
+        Ponto pVet = getPonto(vet[i]);
+        if(isInicioOuFim(vet[i])==0){
+            if(getTipoSegmento(getSegmento(vet[i]))==0)
+                ativaSegmento(getSegmento(vet[i]));
+                segmentosAtivos= insert(segmentosAtivos,getSegmento(vet[i]));
+            if(isEncoberto(vet[i],segmentosAtivos)==0){
+                Segmento s = SegMaisProx(vet[i],vet,i);
+                if(s!=NULL && i!=0){
+                    Ponto pV1 = getPonto(getV1Segmento(s));
+                    Ponto pV2 = getPonto(getV2Segmento(s));
+                    y = intersectionLines(foco,pVet,pV1,pV2);
+                    if(y!=NULL){
+                        vy=criaVertice(y,1,0);
+                        insert(segmentosResposta,criaSegmento(biombo,vy,1,1));
+                        insert(segmentosResposta,criaSegmento(vy,vet[i],1,1));
+                    }
+                }
+                biombo = vet[i];
+            }
+        } else {
+            if(isEncoberto(vet[i],segmentosAtivos)==1) {
+                desativaSegmento(getSegmento(vet[i]));
+                removeElem(segmentosAtivos,getSegmento(vet[i]));
+            } else {
+                desativaSegmento(getSegmento(vet[i]));
+                removeElem(segmentosAtivos,getSegmento(vet[i]));
+                Segmento s = SegMaisProx(vet[i],vet,i);
+                if(s!=NULL) {
+                    Ponto pV1 = getPonto(getV1Segmento(s));
+                    Ponto pV2 = getPonto(getV2Segmento(s));
+                    y = intersectionLines(foco,pVet,pV1,pV2);
+                    if(y!=NULL) {
+                        vy=criaVertice(y,1,0);
+                        insert(segmentosResposta,criaSegmento(biombo,vet[i],1,1));
+                        insert(segmentosResposta,criaSegmento(vy,vet[i],1,1));
+                        biombo = vy;
+                    }
+                }
+            }
+        }
+        if(i==indice-1 && getAnguloVertice(vet[i]) != getAnguloVertice(vet[indice-1])){
+            insert(segmentosResposta,criaSegmento(biombo,vet[i],1,1));
+        }
+
+        if(i+1<indice && isEqual(getPonto(vet[0]),getPonto(vet[i+1])) && getAnguloVertice(vet[i+1])==360){
+            insert(segmentosResposta,criaSegmento(biombo,vet[0],1,1));
+            break;
+        }
+    }
+    desenhaSegmentos(segmentosResposta, nomeSvg);
+    free(vy);
+    free(y);
+    free(vet);
+    free(foco);
+    desalocarlista(Segmentos);
+    desalocarlista(segmentosResposta);
+}
+
+int criaContornoMuro(Vertice vertices[], Lista Segmentos, int indice, tabelaHash **hashMur, char* svg) {
+    float xMin=xFoco,yMin=yFoco,xMax=xFoco,yMax=yFoco;
+    int i=0, tamMuro = getTamHash(*hashMur);
+    Muro m;
+
+    for (int i = 0; i < tamMuro; i++) {
+        listaHash n = getIndiceHash(*hashMur, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                m = getObjetoHash2(aux);
+
+                if(getMuroX1(m)<getMuroX2(m)){
+                    if(xMin>getMuroX1(m))
+                        xMin=getMuroX1(m);
+                    if(xMax<getMuroX2(m))
+                        xMax=getMuroX2(m);
+                }else{
+                    if(xMin>getMuroX2(m))
+                        xMin=getMuroX2(m);
+                    if(xMax<getMuroX1(m))
+                        xMax=getMuroX1(m);
+                }
+                if(getMuroY1(m)<getMuroY2(m)){
+                    if(yMin>getMuroY1(m))
+                        yMin=getMuroY1(m);
+                    if(yMax<getMuroY2(m))
+                        yMax=getMuroY2(m);
+                }else{
+                    if(yMin>getMuroY2(m))
+                        yMin=getMuroY2(m);
+                    if(yMax<getMuroY1(m))
+                        yMax=getMuroY1(m);
+                }
+
+                aux = n;
+            }
+        }
+    }
+
+    Ponto p1 = criaPonto(xMin-30,yMin-30);
+    Vertice v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    Ponto p2 = criaPonto(xMin-30,yMax+30);
+    Vertice v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+
+    contLeste=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contLeste);
+    setSegmento(v1,contLeste);
+    setSegmento(v2,contLeste);
+
+    p1 = criaPonto(xMin-30,yMin-30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMin-30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMin-30));
+    vertices[indice]=v2;
+    indice++;
+
+    contSul=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contSul);
+    setSegmento(v1,contSul);
+    setSegmento(v2,contSul);
+
+
+    p1 = criaPonto(xMax+30,yMin-30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMin-30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMax+30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+    contOeste=criaSegmento(v1,v2,1,1);
+    contOesteB=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contOeste);
+
+    setSegmento(v1,contOeste);
+    setSegmento(v2,contOeste);
+
+
+    p1 = criaPonto(xMin-30,yMax+30);
+    v1 = criaVertice(p1,-1,calcularAngulo(xFoco,yFoco,xMin-30,yMax+30));
+    vertices[indice]=v1;
+    indice++;
+
+    p2 = criaPonto(xMax+30,yMax+30);
+    v2 = criaVertice(p2,-1,calcularAngulo(xFoco,yFoco,xMax+30,yMax+30));
+    vertices[indice]=v2;
+    indice++;
+
+    contNorte=criaSegmento(v1,v2,1,1);
+    Segmentos = insert(Segmentos,contNorte);
+
+    setSegmento(v1,contNorte);
+    setSegmento(v2,contNorte);
+
+    desenharLinha(svg, xMin-30, xMin-30, yMin-30, yMax+30);
+    desenharLinha(svg, xMin-30, xMax+30, yMin-30, yMin-30);
+    desenharLinha(svg, xMax+30, xMax+30, yMin-30, yMax+30);
+    desenharLinha(svg, xMin-30, xMax+30, yMax+30, yMax+30);
+
+    return indice;
+}
+
+int criaVerticesAndSegmentosMuro(tabelaHash **hashMur, Vertice vertices[], Lista Segmentos) {
+    int i=0, id=0, tamMuro = getTamHash(*hashMur);
+    Muro m;
+
+    Ponto foco = criaPonto(xFoco,yFoco);
+    for (int j = 0; j < tamMuro; j++) {
+        listaHash n = getIndiceHash(*hashMur, j);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                m = getObjetoHash2(aux);
+
+                Ponto ponto = criaPonto(getMuroX1(m),getMuroY1(m));
+                Vertice v1=criaVertice(ponto,0,calcularAngulo(xFoco,yFoco,getMuroX1(m),getMuroY1(m)));
+                vertices[i]=v1;
+                i++;
+
+                ponto = criaPonto(getMuroX2(m),getMuroY2(m));
+                Vertice v2=criaVertice(ponto,1,calcularAngulo(xFoco,yFoco,getMuroX2(m),getMuroY2(m)));
+                vertices[i]=v2;
+                i++;
+
+                Segmento s = criaSegmento(v1,v2,0,0);
+                Segmentos = insert(Segmentos,s);
+
+                setSegmento(v1,s);
+                setSegmento(v2,s);
+
+                aux = n;
+            }
+        }
+    }
+    free(foco);
+    return i;
+}
+
+void desenhaSegmentosPoligono(Lista Segmentos, char *svg, char *pol) {
+    FILE *arqSvg;
+    arqSvg = fopen(svg, "a");
+    if (arqSvg == NULL) {
+        printf("\nErro na abertura Svg.");
+    }
+
+    FILE *arqPol;
+    arqPol = fopen(pol, "a");
+
+    fprintf(arqSvg,"\n\t<polygon points=\"");
+    int posSeg = getFirst(Segmentos);
+    int i=0;
+    while (posSeg!=-1){
+        Segmento s = get(Segmentos,posSeg);
+        Ponto p1=getPonto(getV1Segmento(s));
+        Ponto p2=getPonto(getV2Segmento(s));
+        fprintf(arqSvg,"%lf,%lf %lf,%lf ",getXPonto(p1),getYPonto(p1),getXPonto(p2),getYPonto(p2));
+        fprintf(arqPol, "%lf %lf\n%lf %lf\n", getXPonto(p1),getYPonto(p1),getXPonto(p2),getYPonto(p2));
+        posSeg=getNext(Segmentos,posSeg);
+        if(i==5){
+            fprintf(arqSvg,"\n\t\t");
+            i=0;
+        }
+        i++;
+    }
+    fprintf(arqSvg,"\" style=\"fill:yellow;fill-opacity:0.5;stroke:purple;stroke-width:1\" />");
+    fclose(arqSvg);
+    fclose(arqPol);
+    desenharBomba(svg,xFoco,yFoco);
+}
+
+void comandoBrn(char *comandos, char *localEntrada, char *nomeSvg, tabelaHash **hashMuro) {
+    char arqPolig[100], *temp5;
+    sscanf(comandos, "brn %f %f %s", &xFoco, &yFoco, arqPolig);
+    int tamanhoVet = (getTamHash(*hashMuro)*8)+(getTamHash(*hashMuro)*2)+100;
+    int tamanhoSegmentos = tamanhoVet/2;
+    Ponto y;
+    Vertice vy;
+
+    Lista Segmentos = criaLista(tamanhoSegmentos);
+
+    Vertice *vet=malloc(sizeof(Vertice)*tamanhoVet);
+
+    int indice=criaVerticesAndSegmentosMuro((tabelaHash)hashMuro, vet, Segmentos);
+
+    indice=criaContornoMuro(vet, Segmentos, indice, (tabelaHash)hashMuro, nomeSvg);
+
+    organizaSegmentos(Segmentos);
+
+    indice=cortaHorizontal(Segmentos,vet,indice,length(Segmentos),nomeSvg);
+
+    qsort(vet,indice,sizeof(Vertice),comparaVertices);
+
+    Lista segmentosResposta = criaLista(tamanhoSegmentos*4);
+    Lista segmentosAtivos = criaLista(tamanhoSegmentos);
+
+    Ponto foco = criaPonto(xFoco,yFoco);
+
+    Vertice biombo = vet[0];
+
+    for(int i=0;i<indice;i++){
+        Ponto pVet = getPonto(vet[i]);
+        if(isInicioOuFim(vet[i])==0){
+            if(getTipoSegmento(getSegmento(vet[i]))==0)
+                ativaSegmento(getSegmento(vet[i]));
+                segmentosAtivos= insert(segmentosAtivos,getSegmento(vet[i]));
+            if(isEncoberto(vet[i],segmentosAtivos)==0){
+                Segmento s = SegMaisProx(vet[i],vet,i);
+                if(s!=NULL && i!=0){
+                    Ponto pV1 = getPonto(getV1Segmento(s));
+                    Ponto pV2 = getPonto(getV2Segmento(s));
+                    y = intersectionLines(foco,pVet,pV1,pV2);
+                    if(y!=NULL){
+                        vy=criaVertice(y,1,0);
+                        insert(segmentosResposta,criaSegmento(biombo,vy,1,1));
+                        insert(segmentosResposta,criaSegmento(vy,vet[i],1,1));
+                    }
+                }
+                biombo = vet[i];
+            }
+        } else {
+            if(isEncoberto(vet[i],segmentosAtivos)==1) {
+                desativaSegmento(getSegmento(vet[i]));
+                removeElem(segmentosAtivos,getSegmento(vet[i]));
+            } else {
+                desativaSegmento(getSegmento(vet[i]));
+                removeElem(segmentosAtivos,getSegmento(vet[i]));
+                Segmento s = SegMaisProx(vet[i],vet,i);
+                if(s!=NULL) {
+                    Ponto pV1 = getPonto(getV1Segmento(s));
+                    Ponto pV2 = getPonto(getV2Segmento(s));
+                    y = intersectionLines(foco,pVet,pV1,pV2);
+                    if(y!=NULL) {
+                        vy=criaVertice(y,1,0);
+                        insert(segmentosResposta,criaSegmento(biombo,vet[i],1,1));
+                        insert(segmentosResposta,criaSegmento(vy,vet[i],1,1));
+                        biombo = vy;
+                    }
+                }
+            }
+        }
+        if(i==indice-1 && getAnguloVertice(vet[i]) != getAnguloVertice(vet[indice-1])){
+            insert(segmentosResposta,criaSegmento(biombo,vet[i],1,1));
+        }
+
+        if(i+1<indice && isEqual(getPonto(vet[0]),getPonto(vet[i+1])) && getAnguloVertice(vet[i+1])==360){
+            insert(segmentosResposta,criaSegmento(biombo,vet[0],1,1));
+            break;
+        }
+    }
+    FILE *arqPol;
+    if(localEntrada != NULL) {
+        temp5 = getArquivo(localEntrada,arqPolig);
+        arqPol = fopen(temp5, "w");
+    } else {
+        arqPol = fopen(arqPolig, "w");
+    }
+    fclose(arqPol);
+    desenhaSegmentosPoligono(segmentosResposta, nomeSvg, temp5);
+    free(vy);
+    free(y);
+    free(vet);
+    free(foco);
+    desalocarlista(Segmentos);
+    desalocarlista(segmentosResposta);
 }
