@@ -20,7 +20,6 @@ Segmento contOeste,contLeste,contSul,contNorte,contOesteB;
 // COMANDOS T1
 
 // Comando "o?"
-// Com erro
 /*
 void comandoOverlap(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
     char id1[20],id2[20];
