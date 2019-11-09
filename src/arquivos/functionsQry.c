@@ -195,30 +195,10 @@ void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tr
 
 // Comando "bb"
 // Com erro
-/*
+
 void comandoBB(char *linhaArquivo,char *nomeSaidaSvg,struct tree **circulo,struct tree **retangulo,struct tree **texto) {
-    char *nomeArquivo = NULL;
-    char *temp = NULL;
-    char sufixo[150];
-    char cor[50];
 
-    FILE *saidaBB = NULL;
-
-    sscanf(linhaArquivo,"bb %s %s",sufixo,cor);
-
-    nomeArquivo = tiraExtensao(nomeSaidaSvg);
-    temp = (char*)calloc(strlen(nomeArquivo)+strlen(sufixo)+6,sizeof(char));
-    strcpy(temp,nomeArquivo);
-    strcat(temp,"-");
-    strcat(temp,sufixo);
-    strcat(temp,".svg");
-
-    saidaBB = fopen(temp,"w");
-    
-    fclose(saidaBB);
-    free(nomeArquivo);
-    free(temp);
-}*/
+}
 
 // COMANDOS T2
 
@@ -303,29 +283,9 @@ void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidr
     }
 }
 
-// Com erro
-/*
 void comandoDel(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
-    char id[50];
-    // Declaração variaveis para cada figura
-    Hidrante h;
-    Semaforo s;
-    Radio r;
-    Quadra q;
-
-    sscanf(linhaArquivo,"del %s",id);
-
-    // Verifica a qual figura pertence o id dado
-    if ((h = getObjetoHash(*hashHid, id)) != NULL) {
-        deleteNodeTree(*hidrante,h);
-    } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
-        deleteNodeTree(*semaforo,s);
-    } else if ((r = getObjetoHash(*hashRad, id)) != NULL) {
-        deleteNodeTree(*radio,r);
-    } else if((q = getObjetoHash(*hashQuad, id)) != NULL) {
-        deleteNodeTree(*quadra,r);
-    }
-}*/
+    
+}
 
 void comandoCbq(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **quadra,tabelaHash **hashQuad) {
 
