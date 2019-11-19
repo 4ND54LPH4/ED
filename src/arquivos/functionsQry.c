@@ -12,68 +12,135 @@
 #include "../figuras/estrutura/rbtree.h"
 #include "../figuras/estrutura/hash.h"
 #include <math.h>
+#include <stdbool.h>
 #define PI 3.1415
 
 float xFoco, yFoco;
 Segmento contOeste,contLeste,contSul,contNorte,contOesteB;
 
+struct resultRet {
+    float x, y, w, h;
+};
+
 // COMANDOS T1
 
-// Comando "o?"
-/*
-void comandoOverlap(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
+resultRet verificaMaior(float y1m, float y2m, float x1m, float x2m, float y1, float y2, float x1, float x2) {
+    float ry1, ry2, rx1, rx2, rh, rw;
+    struct resultRet* resultado = (struct resultRet*) malloc(sizeof(struct resultRet));
+    if (y1m < y2m) ry1 = y1m;
+    else ry1 = y2m;
+    if (x1m < x2m) rx1 = x1m;
+    else rx1 = x2m;
+    if (y1 > y2) ry2 = y1;
+    else ry2 = y2;
+    if (x1 > x2) rx2 = x1;
+    else rx2 = x2;
+    rh = ry2 - ry1;
+    rw = rx2 - rx1;
+    resultado->x = rx1;
+    resultado->y = ry1;
+    resultado->w = rw;
+    resultado->h = rh;
+    return (void*) resultado;
+}
+
+int sobreTeste(float x1, float x2, float y1, float y2, float w, float h, float r) {
+    float distX, distY, dx, dy;
+    distX = abs(x1 - x2-w);
+    distY = abs(y1 - y2-h);
+    if (distX > (w + r)) return 0;
+    if (distY > (h + r)) return 0;
+    if (distX <= w) return 1;
+    if (distY <= h) return 1;
+    dx = distX - w;
+    dy = distY - h;
+    if(dx*dx+dy*dy <= (r*r)) return 1;
+    else return 0;
+}
+
+void comandoOverlap(char *linhaArquivo,char *saidaSvg,char *saidaTxt,tabelaHash **hashCirc,tabelaHash **hashRet) {
     char id1[20],id2[20];
-    int overlap = 0;
-    // Arquivos de saída
+    int c = 0;
+    float x1, x2, y1, y2, raio1, raio2, w1, w2, h1, h2, dist;
     FILE *arquivoSaidaSvg = NULL;
-    FILE *arquivoSaidaTxt = NULL;
 
     arquivoSaidaSvg = fopen(saidaSvg,"a+");
-    arquivoSaidaTxt = fopen(saidaTxt,"a+");
 
-    if(arquivoSaidaSvg == NULL || arquivoSaidaTxt == NULL) {
+    if(arquivoSaidaSvg == NULL) {
         printf("Erro ao abrir arquivo\n");
         exit(0);
     }
 
     sscanf(linhaArquivo,"o? %s %s",id1,id2);
+    escreverTextoTxt(saidaTxt, linhaArquivo);
 
     Circulo c1;
     Circulo c2;
     Retangulo r1;
     Retangulo r2;
+    struct resultRet* resultado = NULL;
 
     if((c1 = getObjetoHash(*hashCirc,id1)) != NULL) {
+        x1 = getCirculoX(c1);
+        y1 = getCirculoY(c1);
+        raio1 = getCirculoRaio(c1);
         if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
-            // 2 circulos
+            x2 = getCirculoX(c2);
+            y2 = getCirculoY(c2);
+            raio2 = getCirculoRaio(c2);
+            dist = dist = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+            resultado = (struct resultRet*) verificaMaior(y1-raio1, y2-raio2, x1-raio1, x2-raio2, y1+raio1, y2+raio2, x1+raio1, x2+raio2);
+            if (dist > (raio1 + raio2)) c = 0;
+            else c = 1;
         } else {
             r2 = getObjetoHash(*hashRet,id2);
-            // Circulo Retangulo
-
+            x2 = getRetanguloX(r2);
+            y2 = getRetanguloY(r2);
+            w2 = getRetanguloLargura(r2)/2;
+            h2 = getRetanguloAltura(r2)/2;
+            resultado = (struct resultRet*) verificaMaior(y1-raio1, y2, x1-raio1, x2, y1+raio1, y2+h2*2, x1+raio1, x2+w2*2);
+            if (sobreTeste(x1, x2, y1, y2, w2, h2, raio1) == 0) c = 0;
+            else c = 1;
         }
     } else {
         r1 = getObjetoHash(*hashRet,id1);
+        x1 = getRetanguloX(r1);
+        y1 = getRetanguloY(r1);
+        h1 = getRetanguloAltura(r1)/2;
+        w1 = getRetanguloLargura(r1)/2;
         if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
-            // Retangulo Circulo
-
+            x2 = getCirculoX(c2);
+            y2 = getCirculoY(c2);
+            raio2 = getCirculoRaio(c2);
+            resultado = (struct resultRet*) verificaMaior(y1, y2-raio2, x1, x2-raio2, y1+h1*2, y2+raio2, x1+w1*2, x2+raio2);
+            if (sobreTeste(x2, x1, y2, y1, w1, h1, raio2) == 0) c = 0;
+            else c = 1;
         } else {
             r2 = getObjetoHash(*hashRet,id2);
-            // 2 retangulos
-
+            x2 = getRetanguloX(r2);
+            y2 = getRetanguloY(r2);
+            w2 = getRetanguloLargura(r2)/2;
+            h2 = getRetanguloAltura(r2)/2;
+            w1 *= 2; h1 *= 2; w2 *= 2; h2 *= 2;
+            resultado = (struct resultRet*) verificaMaior(y1, y2, x1, x2, y1+h1, y2+h2, x1+w1, x2+w2);
+            if ((x1+w1 >= x2) && (x1<=x2+w2) && (y1+h1 >= y2) && (y1 <= y2+h2)) c = 1;
+            else c = 0;
         }
     }
 
-    if(overlap) {
-
+    if (c) {
+        escreverTextoTxt(saidaTxt, "SIM\n\n");
+        fprintf(arquivoSaidaSvg, "<rect x='%.2lf' y='%.2lf' width='%.2lf' height='%.2lf' stroke-width='1' stroke='red' fill-opacity='0.0' fill='blue' />\n", resultado->x, resultado->y, resultado->w, resultado->h);
+        free(resultado);
     } else {
-
+        escreverTextoTxt(saidaTxt, "NAO\n\n");
+        fprintf(arquivoSaidaSvg, "<rect x='%.2lf' y='%.2lf' width='%.2lf' height='%.2lf' stroke-dasharray='5,5' stroke-width='1' stroke='red' fill-opacity='0.0' fill='blue' />\n", resultado->x, resultado->y, resultado->w, resultado->h);
+        free(resultado);
     }
 
     fclose(arquivoSaidaSvg);
-    fclose(arquivoSaidaTxt);
-}*/
+}
 
-// Comandos "i?"
 void comandoInterno(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
     char id[20];
     double x,y;
@@ -92,7 +159,7 @@ void comandoInterno(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree
         raio = getCirculoRaio(c);
         dx = x-x1Figura;
         dy = y-y1Figura;
-        
+
         distancia = sqrt((dx*dx) + (dy*dy));
 
         if(distancia >= raio) {
@@ -132,7 +199,6 @@ void comandoInterno(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree
 
 }
 
-// Comando "d?"
 void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **circulo,struct tree **retangulo,tabelaHash **hashCirc,tabelaHash **hashRet) {
     char id1[20],id2[20];
     double dx1,dx2,dy1,dy2;
@@ -150,7 +216,7 @@ void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tr
 
         dx1 = getCirculoX(c1);
         dy1 = getCirculoY(c1);
-        
+
         if((c2 = getObjetoHash(*hashCirc,id2)) != NULL) {
 
             dx2 = getCirculoX(c2);
@@ -164,9 +230,9 @@ void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tr
     } else {
 
         r1 = getObjetoHash(*hashRet,id1);
-        
+
         dx2 = getRetanguloX(r1) + (getRetanguloLargura(r1)/2);
-        
+
         dy2 = getRetanguloY(r1) + (getRetanguloAltura(r1)/2);
 
 
@@ -176,10 +242,10 @@ void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tr
 
             dy1 = getCirculoY(c2);
         } else {
-            
+
             r2 = getObjetoHash(*hashRet,id2);
             dx1 = getRetanguloX(r2) + (getRetanguloLargura(r2)/2);
-            
+
             dy1 = getRetanguloY(r2) + (getRetanguloAltura(r2)/2);
         }
     }
@@ -192,64 +258,116 @@ void comandoDistancia(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tr
     escreverDistanciaTxt(linhaArquivo,distancia,saidaTxt);
 }
 
-// Comando "bb"
-// Com erro
 
-void comandoBB(char *linhaArquivo,char *nomeSaidaSvg,struct tree **circulo,struct tree **retangulo,struct tree **texto) {
+void comandoBB(char *linhaArquivo,char *localSaida,char *pGeo,char *pQry, struct tree **circulo, struct tree **retangulo, tabelaHash **hashCirc, tabelaHash **hashRet) {
+    char cor[30], sufixo[50], *saidaSvg = NULL;
+    int tamCirc = getTamHash(*hashCirc), tamRet = getTamHash(*hashRet);
+    double x1, y1, raio, x, y, w, h;
+    FILE *arqSvg;
+    sscanf(linhaArquivo, "bb %s %s", sufixo, cor);
+    saidaSvg = getSvgSaidaBB(localSaida, pGeo, pQry, sufixo);
+    iniciarSvg(saidaSvg);
+    arqSvg = fopen(saidaSvg, "a+");
+    treeToSvg(*circulo, saidaSvg);
+    treeToSvg(*retangulo, saidaSvg);
+    Circulo c;
+    Retangulo r;
 
+    for (int i = 0; i < tamCirc; i++) {
+        listaHash n = getIndiceHash(*hashCirc, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                c = getObjetoHash2(aux);
+                x1 = getCirculoX(c);
+                y1 = getCirculoY(c);
+                raio = getCirculoRaio(c);
+                x = x1 - raio;
+                y = y1 - raio;
+                w = (x1 + raio) - (x1 - raio);
+                h = (y1 + raio) - (y1 - raio);
+                fprintf(arqSvg,"\t<rect x='%lf' y='%lf' width='%lf' height='%lf' stroke='%s' fill='%s' stroke-width='1'/>\n", x, y, w, h, cor, cor);
+                aux = n;
+            }
+        }
+    }
+
+    for (int i = 0; i < tamRet; i++) {
+        listaHash n = getIndiceHash(*hashRet, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                r = getObjetoHash2(aux);
+                x1 = getRetanguloX(r);
+                y1 = getRetanguloY(r);
+                w = getRetanguloLargura(r);
+                h = getRetanguloAltura(r);
+                x = x1 + w;
+                y = y1 + h;
+                fprintf(arqSvg, "<ellipse cx='%f' cy='%f' rx='%f' ry='%f' stroke='%s' fill='%s' />\n", x, y, w, h, cor, cor);
+                aux = n;
+            }
+        }
+    }
+
+    fclose(arqSvg);
+    finalizarSvg(saidaSvg);
+    free(saidaSvg);
 }
 
-// COMANDOS T2
 
-// Função para exemplo de consulta nas trees e hash
 void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
-    char metrica[3], id[50];
+    FILE *arqSvg = fopen(nomeSvg, "a+");
+    char metrica[3], id[50], result[100];
     double dist1, dist2, x1, y1, x2, y2, w1, h1;
     int tam;
     sscanf(comandos, "dq %s %s %lf", metrica, id, &dist1);
+    escreverTextoTxt(nomeTxt, comandos);
 
-    // Declaração variaveis para cada figura
     Hidrante h;
     Semaforo s;
     Radio r;
     Quadra q;
 
-    // Verifica a qual figura pertence o id dado
     if ((h = getObjetoHash(*hashHid, id)) != NULL) {
         x2 = getHidranteX(h);
         y2 = getHidranteY(h);
+        sprintf(result, "TIPO: HIDRANTE; X: %f; Y: %f", x2, y2);
     } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
         x2 = getSemaforoX(s);
         y2 = getSemaforoY(s);
+        sprintf(result, "TIPO: SEMAFORO; X: %f; Y: %f", x2, y2);
     } else if ((r = getObjetoHash(*hashRad, id)) != NULL) {
         x2 = getRadioX(r);
         y2 = getRadioY(r);
+        sprintf(result, "TIPO: TORRE DE CELULAR; X: %f; Y: %f", x2, y2);
     }
-
+    fprintf(arqSvg,"\t<circle r='20' cx='%lf' cy='%lf' stroke='red' fill='blue' stroke-width='5'/>\n",x2, y2);
+    escreverTextoTxt(nomeTxt, result);
+    escreverTextoTxt(nomeTxt, "\nQUADRAS REMOVIDAS:");
     tam = getTamHash(*hashQuad);
 
     if (strcmp(metrica, "L1") == 0) {
-        // Percorrer a hash de quadra para encontrar qual satisfaz a condicao dada. isso aqui é reutilizavel
         for (int i = 0; i < tam; i++) {
     		listaHash n = getIndiceHash(*hashQuad, i);
     		if (n != NULL) {
     			listaHash aux = n;
     			while (aux != NULL) {
     				n = getProxHash(n);
-                    // Daqui pra baixo pode mudar dependendo do que o comando pede
-                    q = getObjetoHash2(aux); // Para poder dar os get precisa desse comando antes
+                    q = getObjetoHash2(aux);
                     x1 = getQuadraX(q);
                     y1 = getQuadraY(q);
                     h1 = getQuadraAltura(q);
                     w1 = getQuadraLargura(q);
                     if ((fabs(x2 - x1) + fabs(y2 - y1)) <= dist1 && (fabs(x2 - (x1+w1)) + fabs(y2 - y1)) <= dist1 && (fabs(x2 - x1) + fabs(y2 - (y1+h1))) <= dist1 && (fabs(x2 - (x1+w1)) + fabs(y2 - (y1+h1))) <= dist1) {
-                        // Se satisfazer condicao remover primeiro da hash depois da tree (sempre nessa ordem)
+                        escreverTextoTxt(nomeTxt, getQuadraId(q));
+                        escreverTextoTxt(nomeTxt, "; ");
                         removerObjetoHash(*hashQuad, getQuadraId(q));
-                        // Para excluir da tree precisa antes dar o findtree e salvar na variavel da figura
                         q = findTree(*quadra, q);
                         deleteNodeTree(*quadra, q);
                     }
-                    // Isso n muda
     				aux = n;
     			}
     		}
@@ -261,33 +379,86 @@ void comandoDq (char* comandos, char* nomeSvg, char* nomeTxt, struct tree **hidr
     			listaHash aux = n;
     			while (aux != NULL) {
     				n = getProxHash(n);
-                    // Daqui pra baixo pode mudar dependendo do que o comando pede
-                    q = getObjetoHash2(aux); // Para poder dar os get precisa desse comando antes
+                    q = getObjetoHash2(aux);
                     x1 = getQuadraX(q);
                     y1 = getQuadraY(q);
                     h1 = getQuadraAltura(q);
                     w1 = getQuadraLargura(q);
                     if ((sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))) <= dist1 && (sqrt(pow((x2 - (x1+w1)), 2) + pow((y2 - y1), 2))) <= dist1 && (sqrt(pow((x2 - x1), 2) + pow((y2 - (y1+h1)), 2))) <= dist1 && (sqrt(pow((x2 - (x1+w1)), 2) + pow((y2 - (y1+h1)), 2))) <= dist1) {
-                        // Se satisfazer condicao remover primeiro da hash depois da tree (sempre nessa ordem)
+                        escreverTextoTxt(nomeTxt, getQuadraId(q));
+                        escreverTextoTxt(nomeTxt, "; ");
                         removerObjetoHash(*hashQuad, getQuadraId(q));
-                        // Para excluir da tree precisa antes dar o findtree e salvar na variavel da figura
                         q = findTree(*quadra, q);
                         deleteNodeTree(*quadra, q);
                     }
-                    // Isso n muda
     				aux = n;
     			}
     		}
         }
     }
+    escreverTextoTxt(nomeTxt, "\n\n");
+    fclose(arqSvg);
 }
 
 void comandoDel(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
-    
+    char id[50], result[100];
+    sscanf(linhaArquivo, "del %s", id);
+    escreverTextoTxt(saidaTxt, linhaArquivo);
+    Hidrante h;
+    Semaforo s;
+    Radio r;
+    Quadra q;
+    if ((q = getObjetoHash(*hashQuad, id)) != NULL) {
+        sprintf(result, "TIPO: QUADRA; X: %lf; Y: %lf", getQuadraX(q), getQuadraY(q));
+        removerObjetoHash(*hashQuad, getQuadraId(q));
+        q = findTree(*quadra, q);
+        deleteNodeTree(*quadra, q);
+    } else if ((h = getObjetoHash(*hashHid, id)) != NULL) {
+        sprintf(result, "TIPO: HIDRANTE; X: %lf; Y: %lf", getHidranteX(h), getHidranteY(h));
+        removerObjetoHash(*hashHid, getHidranteId(h));
+        h = findTree(*hidrante, h);
+        deleteNodeTree(*hidrante, h);
+    } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
+        sprintf(result, "TIPO: SEMAFORO; X: %lf; Y: %lf", getSemaforoX(s), getSemaforoY(s));
+        removerObjetoHash(*hashSem, getSemaforoId(s));
+        s = findTree(*semaforo, s);
+        deleteNodeTree(*semaforo, s);
+    } else if ((r = getObjetoHash(*hashRad, id)) != NULL) {
+        sprintf(result, "TIPO: TORRE DE CELULAR; X: %lf; Y: %lf", getRadioX(r), getRadioY(r));
+        removerObjetoHash(*hashRad, getRadioId(r));
+        r = findTree(*radio, r);
+        deleteNodeTree(*radio, r);
+    }
+    escreverTextoTxt(saidaTxt, result);
+    escreverTextoTxt(saidaTxt, "\n\n");
 }
 
 void comandoCbq(char *linhaArquivo,char *saidaSvg,char *saidaTxt,struct tree **quadra,tabelaHash **hashQuad) {
+    char cstrk[50];
+    int tam = getTamHash(*hashQuad);
+    double x, y, r;
+    Quadra q;
+    sscanf(linhaArquivo, "cbq %lf %lf %lf %s", &x, &y, &r, cstrk);
+    escreverTextoTxt(saidaTxt, linhaArquivo);
+    escreverTextoTxt(saidaTxt, "QUADRAS COM BORDA ALTERADA: ");
 
+    for (int i = 0; i < tam; i++) {
+        listaHash n = getIndiceHash(*hashQuad, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                q = getObjetoHash2(aux);
+                if (verificaQuadraDentroCirculo(x, y, r, q)) {
+                    setQuadraCstrk(q, cstrk);
+                    escreverTextoTxt(saidaTxt, getQuadraId(q));
+                    escreverTextoTxt(saidaTxt, "; ");
+                }
+                aux = n;
+            }
+        }
+    }
+    escreverTextoTxt(saidaTxt, "\n\n");
 }
 
 int verificaQuadraDentroCirculo(double x,double y,double raio,Quadra q) {
@@ -329,7 +500,6 @@ int verificaQuadraDentroCirculo(double x,double y,double raio,Quadra q) {
 void comandoCrd(char *linhaArquivo,char *saidaTxt,struct tree **hidrante, struct tree **semaforo, struct tree **radio, struct tree**quadra, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad, tabelaHash **hashQuad) {
     char id[50];
     FILE *arquivoSaidaTxt = fopen(saidaTxt,"a+");
-    // Declaração variaveis para cada figura
     Hidrante h;
     Semaforo s;
     Radio r;
@@ -337,7 +507,6 @@ void comandoCrd(char *linhaArquivo,char *saidaTxt,struct tree **hidrante, struct
 
     sscanf(linhaArquivo,"crd? %s",id);
 
-    // Verifica a qual figura pertence o id dado
     if ((h = getObjetoHash(*hashHid, id)) != NULL) {
         fprintf(arquivoSaidaTxt,"%sHIDRANTE | X = %lf | Y = %lf\n",linhaArquivo,getHidranteX(h),getHidranteY(h));
     } else if ((s = getObjetoHash(*hashSem, id)) != NULL) {
@@ -349,6 +518,390 @@ void comandoCrd(char *linhaArquivo,char *saidaTxt,struct tree **hidrante, struct
     } else {
         fprintf(arquivoSaidaTxt,"%sFigura não encontrada\n",linhaArquivo);
     }
+
+}
+
+void comandoTrns(char *comandos, char *nomeSvg, char *nomeTxt, tabelaHash **hashQuad, tabelaHash **hashHid, tabelaHash **hashSem, tabelaHash **hashRad) {
+    char result[100];
+    double x1, x2, y1, y2, w1, w2, h1, h2, r1, dx, dy;
+    int tamQuad = getTamHash(*hashQuad), tamHid = getTamHash(*hashHid), tamSem = getTamHash(*hashSem), tamRad = getTamHash(*hashRad);
+    sscanf(comandos, "trns %lf %lf %lf %lf %lf %lf", &x2, &y2, &w2, &h2, &dx, &dy);
+    escreverTextoTxt(nomeTxt, comandos);
+    escreverTextoTxt(nomeTxt, "QUADRAS E EQUIPAMENTOS MOVIDOS:");
+
+    Hidrante h;
+    Semaforo s;
+    Radio r;
+    Quadra q;
+
+    for (int i = 0; i < tamQuad; i++) {
+        listaHash n = getIndiceHash(*hashQuad, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                q = getObjetoHash2(aux);
+                x1 = getQuadraX(q);
+                y1 = getQuadraY(q);
+                w1 = getQuadraLargura(q);
+                h1 = getQuadraAltura(q);
+                if (x1 >= x2 && y1 >= y2 && x1+w1 <= x2+w2 && y1+h1 <= y2+h2) {
+                    sprintf(result, "CEP: %s; X ANTIGO: %f; Y ANTIGO: %f; X NOVO: %f; Y NOVO: %f; ", getQuadraId(q), x1, y1, x1+dx, y1+dy);
+                    escreverTextoTxt(nomeTxt, result);
+                    setQuadraX(q, x1+dx);
+                    setQuadraY(q, y1+dy);
+                }
+                aux = n;
+            }
+        }
+    }
+
+    for (int i = 0; i < tamHid; i++) {
+        listaHash n = getIndiceHash(*hashHid, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                h = getObjetoHash2(aux);
+                x1 = getHidranteX(h);
+                y1 = getHidranteY(h);
+                r1 = 3;
+                if (x1-r1 >= x2 && y1-r1 >= y2 && x1+r1 <= x2+w2 && y1+r1 <= y2+h2) {
+                    sprintf(result, "ID: %s; X ANTIGO: %f; Y ANTIGO: %f; X NOVO: %f; Y NOVO: %f; ", getHidranteId(h), x1, y1, x1+dx, y1+dy);
+                    escreverTextoTxt(nomeTxt, result);
+                    setHidranteX(h, x1+dx);
+                    setHidranteY(h, y1+dy);
+                }
+                aux = n;
+            }
+        }
+    }
+
+    for (int i = 0; i < tamSem; i++) {
+        listaHash n = getIndiceHash(*hashSem, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                s = getObjetoHash2(aux);
+                x1 = getSemaforoX(s);
+                y1 = getSemaforoY(s);
+                r1 = 5;
+                if (x1-r1 >= x2 && y1-r1 >= y2 && x1+r1 <= x2+w2 && y1+r1 <= y2+h2) {
+                    sprintf(result, "ID: %s; X ANTIGO: %f; Y ANTIGO: %f; X NOVO: %f; Y NOVO: %f; ", getSemaforoId(s), x1, y1, x1+dx, y1+dy);
+                    escreverTextoTxt(nomeTxt, result);
+                    setHidranteX(s, x1+dx);
+                    setHidranteY(s, y1+dy);
+                }
+                aux = n;
+            }
+        }
+    }
+
+    for (int i = 0; i < tamRad; i++) {
+        listaHash n = getIndiceHash(*hashRad, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                r = getObjetoHash2(aux);
+                x1 = getRadioX(r);
+                y1 = getRadioY(r);
+                r1 = 7;
+                if (x1-r1 >= x2 && y1-r1 >= y2 && x1+r1 <= x2+w2 && y1+r1 <= y2+h2) {
+                    sprintf(result, "ID: %s; X ANTIGO: %f; Y ANTIGO: %f; X NOVO: %f; Y NOVO: %f; ", getRadioId(h), x1, y1, x1+dx, y1+dy);
+                    escreverTextoTxt(nomeTxt, result);
+                    setRadioX(r, x1+dx);
+                    setRadioY(r, y1+dy);
+                }
+                aux = n;
+            }
+        }
+    }
+    escreverTextoTxt(nomeTxt, "\n\n");
+}
+
+// COMANDOS T3
+
+void peneira(float *vet, int raiz, int fundo) {
+    int pronto, filhoMax;
+    float tmp;
+
+	pronto = 0;
+	while ((raiz*2 <= fundo) && (!pronto)) {
+		if (raiz*2 == fundo) {
+			filhoMax = raiz * 2;
+		} else if (vet[raiz * 2] > vet[raiz * 2 + 1]) {
+			filhoMax = raiz * 2;
+		} else {
+			filhoMax = raiz * 2 + 1;
+		}
+	    if (vet[raiz] < vet[filhoMax]) {
+		    tmp = vet[raiz];
+		    vet[raiz] = vet[filhoMax];
+		    vet[filhoMax] = tmp;
+		    raiz = filhoMax;
+        } else {
+            pronto = 1;
+        }
+    }
+}
+
+void peneira2(float *vet, int raiz, int fundo) {
+    int pronto, filhoMax;
+    float tmp;
+
+	pronto = 0;
+	while ((raiz*2 <= fundo) && (!pronto)) {
+		if (raiz*2 == fundo) {
+			filhoMax = raiz * 2;
+		} else if (vet[raiz * 2] < vet[raiz * 2 + 1]) {
+			filhoMax = raiz * 2;
+		} else {
+			filhoMax = raiz * 2 + 1;
+		}
+	    if (vet[raiz] > vet[filhoMax]) {
+		    tmp = vet[raiz];
+		    vet[raiz] = vet[filhoMax];
+		    vet[filhoMax] = tmp;
+		    raiz = filhoMax;
+        } else {
+            pronto = 1;
+        }
+    }
+}
+
+void heapSort(float *vet, int n, bool ref) {
+	int i;
+    float tmp;
+
+    if (ref) { //crescente
+        for (i = (n / 2); i >= 0; i--) {
+            peneira(vet, i, n - 1);
+        }
+        for (i = n-1; i >= 1; i--) {
+            tmp = vet[0];
+            vet[0] = vet[i];
+            vet[i] = tmp;
+            peneira(vet, 0, i-1);
+        }
+    } else { //decrescente
+        for (i = (n / 2); i >= 0; i--) {
+            peneira2(vet, i, n - 1);
+        }
+        for (i = n-1; i >= 1; i--) {
+            tmp = vet[0];
+            vet[0] = vet[i];
+            vet[i] = tmp;
+            peneira2(vet, 0, i-1);
+        }
+    }
+}
+
+void comandoFi(char *comandos, char* saidaSvg, char* saidaTxt, tabelaHash **hashSem, tabelaHash **hashHid) {
+    float x1, x2, y1, y2, r, *dist;
+    int ns, tamanho, l = 0, tamHid = getTamHash(*hashHid);
+    char verificaIgual[100];
+    FILE *arqSvg = fopen(saidaSvg, "a+");
+    sscanf(comandos, "fi %f %f %d %f", &x2, &y2, &ns, &r);
+    escreverTextoTxt(saidaTxt, comandos);
+    escreverTextoTxt(saidaTxt, "Semaforos:");
+    tamanho = getTamHash(*hashSem);
+    dist = malloc(sizeof(float)* (tamanho));
+    strcpy(verificaIgual, "");
+    Semaforo s;
+    Hidrante h;
+    fprintf(arqSvg, "<polygon points='%f,%f %f,%f %f,%f' fill='orangered' stroke='yellow' stroke-width='1'/>\n", x2, y2-10, x2-10, y2+10, x2+10, y2+10);
+    for (int i = 0; i < tamanho; i++) {
+        listaHash n = getIndiceHash(*hashSem, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                s = getObjetoHash2(aux);
+                x1 = getSemaforoX(s);
+                y1 = getSemaforoY(s);
+                dist[l] = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+                l++;
+                aux = n;
+            }
+        }
+    }
+    heapSort(dist, l, true);
+    for(int k=0;k<ns;k++) {
+        for (int i = 0; i < tamanho; i++) {
+            listaHash n = getIndiceHash(*hashSem, i);
+            if (n != NULL) {
+                listaHash aux = n;
+                while (aux != NULL) {
+                    n = getProxHash(n);
+                    s = getObjetoHash2(aux);
+                    x1 = getSemaforoX(s);
+                    y1 = getSemaforoY(s);
+                    if (((int) (dist[k]*100)) == ((int)(sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))*100))) {
+                        if (strcmp(verificaIgual, getSemaforoId(s))) {
+                            escreverTextoTxt(saidaTxt, getSemaforoId(s));
+                            escreverTextoTxt(saidaTxt, ", ");
+                            fprintf(arqSvg,"\t<circle r='15' cx='%lf' cy='%lf' stroke='black' fill='green' stroke-width='1'/>\n",getSemaforoX(s), getSemaforoY(s));
+                            desenharLinha(saidaSvg, x1, x2, y1, y2);
+                            strcpy(verificaIgual, getSemaforoId(s));
+                            break;
+                        }
+                    }
+                    aux = n;
+                }
+            }
+        }
+    }
+    escreverTextoTxt(saidaTxt, "\nHidrantes:");
+    for (int i = 0; i < tamHid; i++) {
+        listaHash n = getIndiceHash(*hashHid, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                h = getObjetoHash2(aux);
+                x1 = getHidranteX(h);
+                y1 = getHidranteY(h);
+                if ((sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))) <= r) {
+                    escreverTextoTxt(saidaTxt, getHidranteId(h));
+                    escreverTextoTxt(saidaTxt, ", ");
+                    fprintf(arqSvg,"\t<circle r='15' cx='%lf' cy='%lf' stroke='black' fill='green' stroke-width='1'/>\n",getHidranteX(h), getHidranteY(h));
+                    desenharLinha(saidaSvg, x1, x2, y1, y2);
+                }
+                aux = n;
+            }
+        }
+    }
+    free(dist);
+    escreverTextoTxt(saidaTxt, "\n\n");
+    fclose(arqSvg);
+
+}
+
+void comandoFh(char *comandos, char* saidaSvg, char* saidaTxt, tabelaHash **hashHid, tabelaHash **hashPrd) {
+    int k, num, l = 0, tamHid = getTamHash(*hashHid), tamPrd = getTamHash(*hashPrd);
+    float *dist, x1, x2, y1, y2;
+    char cep[100], face, ref, verificaIgual[100], id[100];
+    Hidrante h;
+    Predio p;
+    FILE *arqSvg = fopen(saidaSvg, "a+");
+    sscanf(comandos, "fh %c%d %s %c %d", &ref, &k, cep, &face, &num);
+    dist = malloc(sizeof(float)* (tamHid));
+    strcpy(verificaIgual, "");
+    escreverTextoTxt(saidaTxt, comandos);
+    sprintf(id, "%s%c%d", cep, face, num);
+
+    p = getObjetoHash(*hashPrd, id);
+    x2 = getPredioTexX(p);
+    y2 = getPredioTexY(p);
+    for (int i = 0; i < tamHid; i++) {
+        listaHash n = getIndiceHash(*hashHid, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                h = getObjetoHash2(aux);
+                x1 = getHidranteX(h);
+                y1 = getHidranteY(h);
+                dist[l] = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+                l++;
+                aux = n;
+            }
+        }
+    }
+    if (ref == '-') heapSort(dist, l, true);
+    else if (ref == '+') heapSort(dist, l, false);
+
+    for (int j=0;j<k;j++) {
+        for (int i = 0; i < tamHid; i++) {
+            listaHash n = getIndiceHash(*hashHid, i);
+            if (n != NULL) {
+                listaHash aux = n;
+                while (aux != NULL) {
+                    n = getProxHash(n);
+                    h = getObjetoHash2(aux);
+                    x1 = getHidranteX(h);
+                    y1 = getHidranteY(h);
+                    if (((int) (dist[j]*100)) == ((int)(sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))*100))) {
+                        if (strcmp(verificaIgual, getHidranteId(h))) {
+                            escreverTextoTxt(saidaTxt, getHidranteId(h));
+                            escreverTextoTxt(saidaTxt, ", ");
+                            fprintf(arqSvg,"\t<circle r='15' cx='%lf' cy='%lf' stroke='black' fill='green' stroke-width='1'/>\n",getHidranteX(h), getHidranteY(h));
+                            desenharLinha(saidaSvg, x1, x2, y1, y2);
+                            strcpy(verificaIgual, getHidranteId(h));
+                            break;
+                        }
+                    }
+                    aux = n;
+                }
+            }
+        }
+    }
+    free(dist);
+    escreverTextoTxt(saidaTxt, "\n");
+    fclose(arqSvg);
+}
+
+void comandoFs(char *comandos, char* saidaSvg, char* saidaTxt, tabelaHash **hashSem, tabelaHash **hashPrd) {
+    int k, num, l = 0, tamanho = getTamHash(*hashSem), teste;
+    float x1, x2, y1, y2, h1, h2, *dist;
+    char cep[100], face, verificaIgual[100], id[100];
+    FILE *arqSvg = fopen(saidaSvg, "a+");
+    sscanf(comandos, "fs %d %s %c %d", &k, cep, &face, &num);
+    Semaforo s;
+    Predio p;
+    dist = malloc(sizeof(float)* (tamanho));
+    strcpy(verificaIgual, "");
+    escreverTextoTxt(saidaTxt, comandos);
+    sprintf(id, "%s%c%d", cep, face, num);
+
+    p = getObjetoHash(*hashPrd, id);
+    x2 = getPredioTexX(p);
+    y2 = getPredioTexY(p);
+    for (int i = 0; i < tamanho; i++) {
+        listaHash n = getIndiceHash(*hashSem, i);
+        if (n != NULL) {
+            listaHash aux = n;
+            while (aux != NULL) {
+                n = getProxHash(n);
+                s = getObjetoHash2(aux);
+                x1 = getSemaforoX(s);
+                y1 = getSemaforoY(s);
+                dist[l] = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+                l++;
+                aux = n;
+            }
+        }
+    }
+    heapSort(dist, l, true);
+    for (int j=0;j<k;j++) {
+        for (int i = 0; i < tamanho; i++) {
+            listaHash n = getIndiceHash(*hashSem, i);
+            if (n != NULL) {
+                listaHash aux = n;
+                while (aux != NULL) {
+                    n = getProxHash(n);
+                    s = getObjetoHash2(aux);
+                    x1 = getSemaforoX(s);
+                    y1 = getSemaforoY(s);
+                    if (((int) (dist[j]*100)) == ((int)(sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2))*100))) {
+                        if (strcmp(verificaIgual, getSemaforoId(s))) {
+                            escreverTextoTxt(saidaTxt, getSemaforoId(s));
+                            escreverTextoTxt(saidaTxt, ", ");
+                            fprintf(arqSvg,"\t<circle r='15' cx='%lf' cy='%lf' stroke='black' fill='green' stroke-width='1'/>\n",getSemaforoX(s), getSemaforoY(s));
+                            desenharLinha(saidaSvg, x1, x2, y1, y2);
+                            strcpy(verificaIgual, getSemaforoId(s));
+                            break;
+                        }
+                    }
+                    aux = n;
+                }
+            }
+        }
+    }
+    free(dist);
+    fclose(arqSvg);
 
 }
 
@@ -468,19 +1021,20 @@ void comandoMud(char* comandos, char* nomeTxt, tabelaHash **hashMor) {
     escreverTextoTxt(nomeTxt, "\n");
 }
 
+void comandoMplg(char *comandos, char* nomeTxt, tabelaHash **hashMor) {
+
+}
+
+void comandoEplg(char *comandos, char* nomeTxt, tabelaHash **hashMor) {
+
+}
+
+void comandoCatac(char *comandos, char* nomeTxt, tabelaHash **hashMor) {
+    
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
+// BRL & BRN
 double distancia(double x1, double y1, double x2, double y2) {
     return sqrt(pow(x2-x1,2)+pow(y2-y1,2));
 }

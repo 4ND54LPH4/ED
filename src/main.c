@@ -77,9 +77,6 @@ int main(int argc,char *argv[]) {
         processarInterativo(pGeo,pQry,localEntrada,localSaida,quantidadeFiguras,&circulo,&retangulo,&texto,&hidrante,&quadra,&semaforo,&radio,&muro,&predio,&tipoEstabelecimento,&estabelecimento,&pessoa,&morador,(tabelaHash)&hashCirc,(tabelaHash)&hashRet,(tabelaHash)&hashHid,(tabelaHash)&hashQuad,(tabelaHash)&hashSem,(tabelaHash)&hashRad,(tabelaHash)&hashPrd,(tabelaHash)&hashMur,(tabelaHash)&hashTipEst,(tabelaHash)&hashEst,(tabelaHash)&hashPes,(tabelaHash)&hashMor);
     }
 
-    // PRINTANDO AS VARIÁVEIS P TESTA ESSA MERDA
-    printf("\n\nGeo: %s\nQry: %s\nlocalEntrada: %s\nlocalSaida: %s\nestab: %s\npessoas: %s\nmodoI: %d\n\n",pGeo,pQry,localEntrada,localSaida,estabComercial,pessoas,modoInterativo);
-
     // Desalocar variáveis
     destruirTabelaHash(hashCirc);
     destruirTabelaHash(hashRet);

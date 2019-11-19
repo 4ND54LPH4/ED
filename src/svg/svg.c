@@ -207,7 +207,7 @@ void desenhaSvgBB(char *nomeSaida,char *cor) {
 
     arquivoSaida = fopen(nomeSaida,"w");
 
-    
+
 
     fclose(arquivoSaida);
 }

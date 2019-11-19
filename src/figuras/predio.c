@@ -5,7 +5,7 @@
 #include "quadra.h"
 
 typedef struct predio {
-    char id[MAX], face;
+    char id[MAX], face, cep[MAX];
     int num;
     float f, p, mrg;
     tabelaHash* hashQuadra;
@@ -26,13 +26,14 @@ Predio addPredio(char comandos[500], tabelaHash hashQuadra) {
     temp->p = p;
     temp->mrg = mrg;
     temp->hashQuadra = hashQuadra;
+    sprintf(temp->cep, "%s%c%d", id, face, num);
 
     return (void*)temp;
 }
 
 char *getPredioId(Predio recebePredio) {
     struct predio *temp = (struct predio*) recebePredio;
-    return temp->id;
+    return temp->cep;
 }
 
 char getPredioFace(Predio recebePredio) {
@@ -179,5 +180,5 @@ int comparaIdPredio(Predio recebePredio1, Predio recebePredio2) {
 int comparaKeyPredio(Predio recebePredio, char *key) {
     struct predio *temp = (struct predio*) recebePredio;
 
-    return strcmp(temp->id, key);
+    return strcmp(temp->cep, key);
 }

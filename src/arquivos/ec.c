@@ -19,8 +19,8 @@ void processarComandosEc(char *estabComercial,char *localEntrada,char *localSaid
     *tipoEstabelecimento = criarTree(comparaTipoEstabelecimento, comparaTipoEstabelecimento, removeTipoEstabelecimento, NULL);
     *estabelecimento = criarTree(comparaEstabelecimento, comparaEstabelecimento, removeEstabelecimento, NULL);
     // Variáveis das hash das figuras
-    *hashTipEst = criarTabelaHash(1000, comparaKeyTipoEstabelecimento, getTipoEstabelecimentoCodt);
-    *hashEst = criarTabelaHash(1000, comparaKeyEstabelecimento, getEstabelecimentoCnpj);
+    *hashTipEst = criarTabelaHash(10000, comparaKeyTipoEstabelecimento, getTipoEstabelecimentoCodt);
+    *hashEst = criarTabelaHash(10000, comparaKeyEstabelecimento, getEstabelecimentoCnpj);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;

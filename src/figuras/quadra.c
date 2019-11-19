@@ -84,9 +84,9 @@ void setQuadracfill(Quadra recebeQuadra,char cfill[MAX]) {
     strcpy(temp->cfill,cfill);
 }
 
-void setQuadracstrk(Quadra recebeQuadra,char cfill[MAX]) {
+void setQuadraCstrk(Quadra recebeQuadra,char cstrk[MAX]) {
     struct quadra *temp = (struct quadra*) recebeQuadra;
-    strcpy(temp->cfill,cfill);
+    strcpy(temp->cstrk,cstrk);
 }
 
 void removeQuadra(Quadra recebeQuadra) {

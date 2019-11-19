@@ -59,7 +59,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
     while(fgets(linhaArquivo,500,arquivoEntrada)!=NULL) {
         if(linhaArquivo[0]=='o' && linhaArquivo[1]=='?') {
             // Formas j e k se sobrepoem?
-            printf("o\n");
+            comandoOverlap(linhaArquivo, temp2, temp3, (tabelaHash)hashCirc, (tabelaHash)hashRet);
 
         } else if(linhaArquivo[0]=='i' && linhaArquivo[1]=='?') {
             // Ponto (x,y) é interno a forma j?
@@ -72,18 +72,18 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='b') {
             // Cria novo arquivo svg contendo os circulos e retangulos referentes aos comandos c e r processados ate o momento.
-            printf("bb\n");
+            comandoBB(linhaArquivo, localSaida, pGeo, pQry, circulo, retangulo, (tabelaHash)hashCirc, (tabelaHash)hashRet);
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='q') {
             comandoDq(linhaArquivo, temp2, temp3, hidrante, semaforo, radio, quadra, (tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='e' && linhaArquivo[2]=='l') {
             // Remove a forma identificada por id (ou cep)
-            // comandoDel(linhaArquivo,temp2,temp3,hidrante,semaforo,radio,quadra,(tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
+            comandoDel(linhaArquivo,temp2,temp3,hidrante,semaforo,radio,quadra,(tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad, (tabelaHash)hashQuad);
 
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='b' && linhaArquivo[2]=='q') {
             // Muda a cor da borda de todas as quadras que estiverem inteiramente contidas dentro do circulo de centro em (x,y) e de raio r.
-            printf("cbq\n");
+            comandoCbq(linhaArquivo, temp2, temp3, quadra, (tabelaHash)hashQuad);
 
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='r' && linhaArquivo[2]=='d') {
             // Imprime as coordenadas e a especie do equipamento urbano
@@ -91,7 +91,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='t' && linhaArquivo[1]=='r' && linhaArquivo[2]=='n') {
             // Desloca todas as quadras e equipamentos urbanos que estiverem inteiramente dentro do retangulo (x,y,w,h) em dx e dy unidades.
-            printf("trans kkkkkkkkkkk\n");
+            comandoTrns(linhaArquivo, temp2, temp3, (tabelaHash)hashQuad, (tabelaHash)hashHid, (tabelaHash)hashSem, (tabelaHash)hashRad);
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='r' && linhaArquivo[2]=='l') {
             // Detonada bomba de radiação luminosa na coordenada (x,y)
@@ -99,15 +99,15 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='f' && linhaArquivo[1]=='i') {
             // Foco de incendio. Encontrar os ns semaforos mais proximos do foco e os hidrantes que estejam a uma distancia de ate r do foco.
-            printf("filho\n");
+            comandoFi(linhaArquivo, temp2, temp3, (tabelaHash)hashSem, (tabelaHash)hashHid);
 
         } else if(linhaArquivo[0]=='f' && linhaArquivo[1]=='h') {
             // Determinar os k hidrantes mais proximos (se -k) ou mais distantes (se +k) do endereço.
-            printf("fh\n");
+            comandoFh(linhaArquivo, temp2, temp3, (tabelaHash)hashHid, (tabelaHash)hashPrd);
 
         } else if(linhaArquivo[0]=='f' && linhaArquivo[1]=='s') {
             // Determinar os k semaforos mais proximos do endereço cep,face,num.
-            printf("fs\n");
+            comandoFs(linhaArquivo, temp2, temp3, (tabelaHash)hashSem, (tabelaHash)hashPrd);
 
         } else if(linhaArquivo[0]=='b' && linhaArquivo[1]=='r' && linhaArquivo[2] == 'n') {
             //Detonada bomba de radiação nuclear na coordenada (x,y)
@@ -119,7 +119,7 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='m' && linhaArquivo[1]=='p' && linhaArquivo[2]=='l') {
             // Moradores dos prédios inteiramente contidos na região delimitada pelo polígono e as quadras que estão ao menos parcialmente dentro da delimitada pelo polígono.
-            printf("mplg?\n");
+            comandoMplg(linhaArquivo, temp2, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='?') {
             //Imprime todos os dados do morador identificado pelo cpf.
@@ -135,11 +135,11 @@ void processarComandosQry(char *pGeo,char *pQry,char *localEntrada,char *localSa
 
         } else if(linhaArquivo[0]=='e' && linhaArquivo[1]=='p' && linhaArquivo[2]=='l') {
             //Estabelecimentos comerciais do tipo tp (ou de qualquer tipo, caso *) que estão inteiramente dentro da região delimitada pelo polígono.
-            printf("eplg?\n");
+            comandoMplg(linhaArquivo, temp2, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='c' && linhaArquivo[1]=='a' && linhaArquivo[2]=='t') {
             //Considere a região delimitada pelo polígono. Remover as quadras que estejam inteiramente contidas no poligono. Remover prédios (inteiramente contidos no poligono) e respectivos moradores, hidrantes, semáforos, rádios-bases.
-            printf("catac\n");
+            comandoCatac(linhaArquivo, temp2, (tabelaHash)hashMor);
 
         } else if(linhaArquivo[0]=='d' && linhaArquivo[1]=='m' && linhaArquivo[2]=='p') {
             //Imprime o estado atual de uma árvore no arquivo arq.svg.

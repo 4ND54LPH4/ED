@@ -48,14 +48,14 @@ void processarComandosGeo(char *pGeo,char *localEntrada,char *localSaida,nx qtdF
     *muro = criarTree(comparaMuro, NULL, removeMuro, desenharMuro);
     *predio = criarTree(comparaPredio, comparaIdPredio, removePredio, desenharPredio);
     // Variáveis das hash das figuras
-    *hashCirc = criarTabelaHash(1000, comparaKeyCirculo, getCirculoID);
-    *hashRet = criarTabelaHash(1000, comparaKeyRetangulo, getRetanguloID);
-    *hashHid = criarTabelaHash(1000, comparaKeyHidrante, getHidranteId);
-    *hashQuad = criarTabelaHash(1000, comparaKeyQuadra, getQuadraId);
-    *hashSem = criarTabelaHash(1000, comparaKeySemaforo, getSemaforoId);
-    *hashRad = criarTabelaHash(1000, comparaKeyRadio, getRadioId);
-    *hashPrd = criarTabelaHash(1000, comparaKeyPredio, getPredioId);
-    *hashMur = criarTabelaHash(1000, comparaKeyMuro, getMuroId);
+    *hashCirc = criarTabelaHash(getINx(qtdFiguras), comparaKeyCirculo, getCirculoID);
+    *hashRet = criarTabelaHash(getINx(qtdFiguras), comparaKeyRetangulo, getRetanguloID);
+    *hashHid = criarTabelaHash(getNhNx(qtdFiguras), comparaKeyHidrante, getHidranteId);
+    *hashQuad = criarTabelaHash(getNqNx(qtdFiguras), comparaKeyQuadra, getQuadraId);
+    *hashSem = criarTabelaHash(getNsNx(qtdFiguras), comparaKeySemaforo, getSemaforoId);
+    *hashRad = criarTabelaHash(getNrNx(qtdFiguras), comparaKeyRadio, getRadioId);
+    *hashPrd = criarTabelaHash(getNpNx(qtdFiguras), comparaKeyPredio, getPredioId);
+    *hashMur = criarTabelaHash(getNmNx(qtdFiguras), comparaKeyMuro, getMuroId);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;

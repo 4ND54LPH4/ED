@@ -5,7 +5,7 @@
 
 void tratarParametros(char **pGeo,char **pQry,char **localEntrada,char **localSaida,char **estabComercial,char **pessoas) {
     tratarArquivo(pGeo);
-    
+
     if(*pQry != NULL) {
         tratarArquivo(pQry);
     }
@@ -18,7 +18,7 @@ void tratarParametros(char **pGeo,char **pQry,char **localEntrada,char **localSa
             strcpy(*localEntrada,"./");
         }
     }
-    
+
     tratarLocal(localSaida);
 
     if(*estabComercial != NULL) {
@@ -99,6 +99,29 @@ char *getSvgSaidaQry(char *localSaida,char *pGeo,char *pQry) {
     strcat(result,nomeArquivo1);
     strcat(result,"-");
     strcat(result,nomeArquivo2);
+    strcat(result,".svg");
+
+    free(nomeArquivo1);
+    free(nomeArquivo2);
+    return result;
+}
+
+char *getSvgSaidaBB(char *localSaida,char *pGeo,char *pQry,char *sufixo) {
+    char *result = NULL;
+    char *nomeArquivo1 = NULL;
+    char *nomeArquivo2 = NULL;
+
+    nomeArquivo1 = tiraExtensao(pGeo);
+    nomeArquivo2 = tiraExtensao(pQry);
+
+    result = (char*)malloc(sizeof(char)*(strlen(nomeArquivo1)+strlen(nomeArquivo2)+strlen(localSaida)+strlen(sufixo)+8));
+
+    strcpy(result,localSaida);
+    strcat(result,nomeArquivo1);
+    strcat(result,"-");
+    strcat(result,nomeArquivo2);
+    strcat(result,"-");
+    strcat(result,sufixo);
     strcat(result,".svg");
 
     free(nomeArquivo1);

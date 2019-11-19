@@ -19,8 +19,8 @@ void processarComandosPm(char *pessoas,char *localEntrada,char *localSaida,nx qt
     *pessoa = criarTree(comparaPessoa, comparaPessoa, removePessoa, NULL);
     *morador = criarTree(comparaMorador, comparaMorador, removeMorador, NULL);
     // Variáveis das hash das figuras
-    *hashPes = criarTabelaHash(1000, comparaKeyPessoa, getPessoaCpf);
-    *hashMor = criarTabelaHash(1000, comparaKeyMorador, getMoradorCpf);
+    *hashPes = criarTabelaHash(10000, comparaKeyPessoa, getPessoaCpf);
+    *hashMor = criarTabelaHash(10000, comparaKeyMorador, getMoradorCpf);
     // Variáveis dos arquivos de entrada e saída
     FILE *arquivoEntrada = NULL;
     FILE *arquivoSaida = NULL;

@@ -8,6 +8,7 @@ void tratarLocal(char **local);
 char *getArquivo(char *local,char *arquivo);
 char *getSvgSaida(char *localSaida,char *arquivo);
 char *getSvgSaidaQry(char *localSaida,char *pGeo,char *pQry);
+char *getSvgSaidaBB(char *localSaida,char *pGeo,char *pQry,char *sufixo);
 char *getTxtSaidaQry(char *localSaida,char *pGeo,char *pQry);
 
 char *tiraExtensao(char *arquivo);

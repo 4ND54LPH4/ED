@@ -289,42 +289,6 @@ static void treeToSvgAux(struct tree *tree, struct node *x, char *nomeArq) {
 void treeToSvg(struct tree *tree, char *nomeArq) {
     treeToSvgAux(tree, tree->raiz->left, nomeArq);
 }
-/*
-static void treeToSvgCirculo(struct tree *tree, struct node *x, char *nomeArq,char *cor) {
-    FILE *boundingBox = NULL;
-
-    if (x != tree->nil) {
-        treeToSvgCirculo(tree, x->left, nomeArq,cor);
-        tree->print(nomeArq, x->objeto);
-        boundingBox = fopen(nomeArq,"a+");
-        fprintf(boundingBox,"\t<rect x='%lf' y='%lf' width='%lf' height='%lf' stroke='%s' fill='%s' stroke-width='%lf'/>\n");
-        fclose(boundingBox);
-        treeToSvgCirculo(tree, x->right, nomeArq,cor);
-    }
-
-}
-
-static void treeToSvgRetangulo(struct tree *tree, struct node *x, char *nomeArq,char *cor) {
-    FILE *boundingBox = NULL;
-    
-    if (x != tree->nil) {
-        treeToSvgAux(tree, x->left, nomeArq);
-        tree->print(nomeArq, x->objeto);
-        boundingBox = fopen(nomeArq,"a+");
-        fprintf("");
-        fclose(boundingBox);
-        treeToSvgAux(tree, x->right, nomeArq);
-    }
-
-}
-
-void treeToSvgBB(struct tree *tree, char *nomeArq,char *cor,int op) {
-    if(op == 0) {
-        treeToSvgCirculo(tree, tree->raiz->left, nomeArq,cor);
-    } else if(op == 1) {
-        treeToSvgRetangulo(tree, tree->raiz->left, nomeArq,cor);
-    }
-}*/
 
 struct node *findTree(struct tree *tree, void *objeto) {
     struct node *x = tree->raiz->left;
